@@ -16,7 +16,7 @@ class KelolaMejaController extends Controller
     public function index() {
         $tables = Table::paginate(10);
         
-        return view('admin.kelolameja' , compact('tables'));
+        return view('Admin.kelolameja' , compact('tables'));
     }
 
     public function store(Request $request)
