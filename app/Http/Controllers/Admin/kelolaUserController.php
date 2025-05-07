@@ -11,7 +11,7 @@ class kelolaUserController extends Controller
     public function index()
     {
         $users = User::paginate(10); // atau User::where('role', '!=', 'admin')->get() jika ingin exclude admin
-        return view('Admin.kelolauser', compact('users'));
+        return view('admin.kelolauser', compact('users'));
     }
     public function store(Request $request)
     {

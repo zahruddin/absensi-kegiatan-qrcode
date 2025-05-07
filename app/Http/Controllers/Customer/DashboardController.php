@@ -10,6 +10,6 @@ class DashboardController extends Controller
     //
     public function index(){
         $products = [];
-        return view('Customer.menu',compact('products'));
+        return view('customer.menu',compact('products'));
     }
 }
