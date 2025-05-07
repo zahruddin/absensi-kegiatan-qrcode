@@ -24,7 +24,7 @@ class LoginController extends Controller
             if ($role === 'kasir') {
                 return redirect()->route('kasir.dashboard');
             }
-            if ($role === 'kasir') {
+            if ($role === 'customer') {
                 return redirect()->route('customer.menu');
             }
             // Jika role tidak sesuai, bisa arahkan ke halaman utama atau halaman lain

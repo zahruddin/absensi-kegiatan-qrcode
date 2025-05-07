@@ -18,7 +18,7 @@
         <!--begin::Primary Meta Tags-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="title" content="TrackBooth" />
-        <meta name="author" content="Zahruddin Fanani" />
+        <meta name="author" content="Afifatul Aprilia Yani Solekhah" />
         <meta
         name="description"
         content="Cafe"
@@ -491,7 +491,7 @@
             <!--begin::Copyright-->
             <strong>
                 Copyright &copy; 2025&nbsp;
-                <a href="https://instagram.com/zaa_fa17" class="text-decoration-none">Zahruddin Fanani</a>.
+                <a href="#" class="text-decoration-none">Afifatul Aprilia Yani Solekhah</a>.
             </strong>
             All rights reserved.
             <!--end::Copyright-->

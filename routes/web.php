@@ -44,6 +44,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin/profile', [Admin\ProfileController::class, 'index'])->name('admin.profile');
 
     Route::get('/admin/kelolauser', [Admin\kelolaUserController::class, 'index'])->name('admin.kelolaUsers');
+    Route::post('/admin/kelolauser', [Admin\KelolaUserController::class, 'store'])->name('admin.kelolauser.add');
+
 
     Route::get('/admin/kelolaproduk', [Admin\ProdukController::class, 'index'])->name('admin.kelolaproduk');
     Route::post('/admin/kelolaproduk', [Admin\ProdukController::class, 'store'])->name('admin.kelolaproduk.add');
