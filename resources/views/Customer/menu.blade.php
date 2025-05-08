@@ -1,6 +1,9 @@
 @extends('layouts.app')
 @section('title', 'Halaman Kasir | TrackBooth')
 @section('page', 'Halaman Kasir')
+@section('style')
+<meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
 @section('content')
 <div class="app-content">
     <div class="container-fluid">
@@ -53,11 +56,16 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                <p>Silakan pilih metode pembayaran:</p>
-                <select id="paymentMethod" class="form-select">
-                    <option value="cash">CASH</option>
-                    <option value="qris">QRIS</option>
+                <input type="hidden" value="qris" id="paymentMethod">
+                <select name="id_meja" id="idmeja" class="form-select">
+                    <option value="">-- Pilih Meja --</option>
+                    @foreach ($tables as $table)
+                        <option value="{{ $table->id }}" {{ isset($meja) && $meja->id == $table->id ? 'selected' : '' }}>
+                            {{ $table->nama_meja }}
+                        </option>
+                    @endforeach
                 </select>
+                
                 <p class="mt-3">Apakah Anda yakin ingin melanjutkan transaksi?</p>
                 </div>
                 <div class="modal-footer">
@@ -302,44 +310,75 @@
 
     // Konfirmasi Pembayaran
     document.getElementById('confirmPayment').addEventListener('click', function() {
+        let confirmBtn = this;
+        confirmBtn.disabled = true;
+        let originalText = confirmBtn.innerHTML;
+        confirmBtn.innerHTML = 'Sedang diproses...';
+
+
         let paymentMethodEl = document.getElementById('paymentMethod');
         if (!paymentMethodEl) {
             console.error("Error: Elemen metode pembayaran tidak ditemukan.");
             alert("Metode pembayaran tidak valid!");
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalText;
             return;
         }
-
+        
         let paymentMethod = paymentMethodEl.value;
+        let idmeja = document.getElementById('idmeja');
+        let idMeja = idmeja.value;
 
-        fetch("/kasir/sales", {
+        // Kalau kamu ingin mendeteksi saat user mengubah pilihan meja
+        idmeja.addEventListener('change', function () {
+            idMeja = this.value;
+            console.log("Meja terpilih:", idMeja);
+            // kamu bisa kirim ke backend atau update tampilan lain di sini
+        });
+            // kamu bisa kirim ke backend atau update tampilan lain di sini 
+
+        fetch("/konfirmasi", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ cart, paymentMethod })
+            body: JSON.stringify({ cart, paymentMethod, idMeja })
         })
-        .then(response => response.json())
-        .then(data => {
-            // console.log("Response dari server:", data);
-            localStorage.removeItem('cart');
-            let paymentModalEl = document.getElementById('paymentModal');
-            if (paymentModalEl) {
-                var paymentModal = bootstrap.Modal.getOrCreateInstance(paymentModalEl);
-                paymentModal.hide();
+        .then(response => {
+            if (response.status === 401) {
+                return response.json().then(data => {
+                    window.location.href = data.redirect;
+                });
             }
-            cart = [];
-            location.reload();
-            // alert(data.message);
-            // renderCart();
-
-            // Panggil fungsi untuk refresh stok produk
-            // location.reload(); // Refresh halaman
-
-            // updateProductStock();
+            return response.json();
         })
-        .catch(error => console.error('Error:', error));
+        .then(data => {
+            if (!data) return;
+
+            if (data.status === 'success' && data.reload) {
+                localStorage.removeItem('cart');
+                let paymentModalEl = document.getElementById('paymentModal');
+                if (paymentModalEl) {
+                    var paymentModal = bootstrap.Modal.getOrCreateInstance(paymentModalEl);
+                    paymentModal.hide();
+                }
+                cart = [];
+                location.reload(); // reload untuk tampilkan alert flash
+            } else {
+                // Jika gagal, aktifkan tombol kembali
+                confirmBtn.disabled = false;
+                confirmBtn.innerHTML = originalText;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalText;
+        });
     });
+
+
     // Fungsi untuk mengambil stok terbaru dan memperbarui tampilan produk
     function updateProductStock() {
         fetch('/api/products') // Pastikan endpoint ini mengembalikan daftar produk terbaru

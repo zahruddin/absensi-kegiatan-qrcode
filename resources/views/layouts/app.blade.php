@@ -255,58 +255,66 @@
                         </ul>
                     </li>  
                     <li class="nav-item dropdown user-menu">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <img
-                        src="{{ asset('dist/assets/img/user2-160x160.jpg')}}"
-                        class="user-image rounded-circle shadow"
-                        alt="User Image"
-                        />
-                        <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                        <!--begin::User Image-->
-                        <li class="user-header text-bg-primary">
-                        <img
-                            src="{{ asset('dist/assets/img/user2-160x160.jpg')}}"
-                            class="rounded-circle shadow"
-                            alt="User Image"
-                        />
-                        <p>
-                            {{ Auth::user()->name }}
-                            <small>Member since {{ Auth::user()->created_at->format('M. Y') }}</small>
-                        </p>
-                        </li>
-                        <!--end::User Image-->
-                        <!--begin::Menu Body-->
-                        {{-- <li class="user-body">
-                        <!--begin::Row-->
-                        <div class="row">
-                            <div class="col-4 text-center"><a href="#">Followers</a></div>
-                            <div class="col-4 text-center"><a href="#">Sales</a></div>
-                            <div class="col-4 text-center"><a href="#">Friends</a></div>
-                        </div>
-                        <!--end::Row-->
-                        </li> --}}
-                        <!--end::Menu Body-->
-                        <!--begin::Menu Footer-->
-                        <li class="user-footer">
-                            @if(Auth::user()->role == 'admin')
-                                <a href="{{ route('admin.profile') }}" class="btn btn-default btn-flat">Profile</a>
-                            @endif
-                            <!-- Menu untuk Kasir -->
-                            @if(Auth::user()->role == 'kasir')
-                                <a href="{{ route('kasir.profile') }}" class="btn btn-default btn-flat">Profile</a>
-                            @endif
-                            @if(Auth::user()->role == 'customer')
-                                <a href="{{ route('customer.profile') }}" class="btn btn-default btn-flat">Profile</a>
-                            @endif
-                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                                @csrf
-                                <button type="submit" class="btn btn-default btn-flat float-end">Sign Out</button>
-                            </form>
-                        </li>
-                        <!--end::Menu Footer-->
-                    </ul>
+                        @auth
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <img
+                                src="{{ asset('dist/assets/img/user2-160x160.jpg') }}"
+                                class="user-image rounded-circle shadow"
+                                alt="User Image"
+                            />
+                            
+                                <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
+                        </a>
+                        @else
+                                    <a href="{{ route('login') }}" class="btn btn-sm btn-primary">Login</a>
+                               
+                            @endauth
+                        @auth
+                        <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                            <!--begin::User Image-->
+                            <li class="user-header text-bg-primary">
+                            <img
+                                src="{{ asset('dist/assets/img/user2-160x160.jpg')}}"
+                                class="rounded-circle shadow"
+                                alt="User Image"
+                            />
+                            <p>
+                                {{ Auth::user()->name }}
+                                <small>Member since {{ Auth::user()->created_at->format('M. Y') }}</small>
+                            </p>
+                            </li>
+                            <!--end::User Image-->
+                            <!--begin::Menu Body-->
+                            {{-- <li class="user-body">
+                            <!--begin::Row-->
+                            <div class="row">
+                                <div class="col-4 text-center"><a href="#">Followers</a></div>
+                                <div class="col-4 text-center"><a href="#">Sales</a></div>
+                                <div class="col-4 text-center"><a href="#">Friends</a></div>
+                            </div>
+                            <!--end::Row-->
+                            </li> --}}
+                            <!--end::Menu Body-->
+                            <!--begin::Menu Footer-->
+                            <li class="user-footer">
+                                @if(Auth::user()->role == 'admin')
+                                    <a href="{{ route('admin.profile') }}" class="btn btn-default btn-flat">Profile</a>
+                                @endif
+                                <!-- Menu untuk Kasir -->
+                                @if(Auth::user()->role == 'kasir')
+                                    <a href="{{ route('kasir.profile') }}" class="btn btn-default btn-flat">Profile</a>
+                                @endif
+                                @if(Auth::user()->role == 'customer')
+                                    <a href="{{ route('customer.profile') }}" class="btn btn-default btn-flat">Profile</a>
+                                @endif
+                                <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                    @csrf
+                                    <button type="submit" class="btn btn-default btn-flat float-end">Sign Out</button>
+                                </form>
+                            </li>
+                            <!--end::Menu Footer-->
+                        </ul>
+                        @endauth
                     </li>
                     <!--end::User Menu Dropdown-->
                 </ul>
@@ -339,121 +347,115 @@
                 <div class="sidebar-wrapper">
                 <nav class="mt-2">
                     <!--begin::Sidebar Menu-->
+                    @auth
                     <ul
                     class="nav sidebar-menu flex-column"
                     data-lte-toggle="treeview"
                     role="menu"
                     data-accordion="false"
                     >
-                    <!-- Menu untuk Admin -->
-                    @if(Auth::user()->role == 'admin')
-                        <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                            <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                        <!-- Menu untuk Admin -->
+                        @if(Auth::user()->role == 'admin')
+                            <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                                <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-speedometer"></i>
+                                        <p>
+                                            Dashboard
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
+                                <a href="{{ route('admin.laporanPenjualan') }}" class="nav-link {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-speedometer"></i>
+                                        <p>
+                                            Laporan Penjualan
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
+                                <a href="{{ route('admin.kelolaUsers') }}" class="nav-link {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-people"></i>
+                                        <p>
+                                            Kelola Users
+                                        </p>
+                                </a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('admin.kelolaproduk') ? 'active' : '' }}">
+                                <a href="{{ route('admin.kelolaproduk') }}" class="nav-link {{ request()->routeIs('admin.kelolaproduk') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-card-list"></i>
+                                    <p>
+                                        Kelola Produk
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('admin.kelolameja') ? 'active' : '' }}">
+                                <a href="{{ route('admin.kelolameja') }}" class="nav-link {{ request()->routeIs('admin.kelolameja') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-card-list"></i>
+                                    <p>
+                                        Kelola Meja
+                                    </p>
+                                </a>
+                            </li>
+                    
+                        @endif
+                        <!-- Menu untuk Kasir -->
+                        @if(Auth::user()->role == 'kasir')
+                            <li class="nav-item">
+                                <a href="{{ route('kasir.dashboard') }}" class="nav-link {{ request()->routeIs('kasir.dashboard') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-speedometer"></i>
-                                    <p>
-                                        Dashboard
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
-                            <a href="{{ route('admin.laporanPenjualan') }}" class="nav-link {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-speedometer"></i>
-                                    <p>
-                                        Laporan Penjualan
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
-                            <a href="{{ route('admin.kelolaUsers') }}" class="nav-link {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-people"></i>
-                                    <p>
-                                        Kelola Users
-                                    </p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->routeIs('admin.kelolaproduk') ? 'active' : '' }}">
-                            <a href="{{ route('admin.kelolaproduk') }}" class="nav-link {{ request()->routeIs('admin.kelolaproduk') ? 'active' : '' }}">
+                                <p>
+                                    Dashboard
+                                </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('kasir.datasales') }}" class="nav-link {{ request()->routeIs('kasir.datasales') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-card-list"></i>
+                                <p>
+                                    Penjualan
+                                </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('kasir.kelolaproduk') }}" class="nav-link {{ request()->routeIs('kasir.kelolaproduk') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-card-list"></i>
                                 <p>
                                     Kelola Produk
                                 </p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->routeIs('admin.kelolameja') ? 'active' : '' }}">
-                            <a href="{{ route('admin.kelolameja') }}" class="nav-link {{ request()->routeIs('admin.kelolameja') ? 'active' : '' }}">
+                                </a>
+                            </li>
+                        @endif
+                        @if(Auth::user()->role == 'customer')
+                            <li class="nav-item {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
+                                <a href="{{ route('customer.menu') }}" class="nav-link {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-card-list"></i>
                                 <p>
-                                    Kelola Meja
+                                    Menu
                                 </p>
-                            </a>
-                        </li>
-                
-                    @endif
-                    <!-- Menu untuk Kasir -->
-                    @if(Auth::user()->role == 'kasir')
-                        <li class="nav-item">
-                            <a href="{{ route('kasir.dashboard') }}" class="nav-link {{ request()->routeIs('kasir.dashboard') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-speedometer"></i>
-                            <p>
-                                Dashboard
-                            </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('kasir.datasales') }}" class="nav-link {{ request()->routeIs('kasir.datasales') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-card-list"></i>
-                            <p>
-                                Penjualan
-                            </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ route('kasir.kelolaproduk') }}" class="nav-link {{ request()->routeIs('kasir.kelolaproduk') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-card-list"></i>
-                            <p>
-                                Kelola Produk
-                            </p>
-                            </a>
-                        </li>
-                    @endif
-                    @if(Auth::user()->role == 'kasir')
-                        <li class="nav-item {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
-                            <a href="{{ route('customer.menu') }}" class="nav-link {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-card-list"></i>
-                            <p>
-                                Menu
-                            </p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->routeIs('customer.keranjang') ? 'active' : '' }}">
-                            <a href="{{ route('customer.keranjang') }}" class="nav-link {{ request()->routeIs('customer.keranjang') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-card-list"></i>
-                            <p>
-                                Keranjang
-                            </p>
-                            </a>
-                        </li>
-                        <li class="nav-item {{ request()->routeIs('customer.riwayat') ? 'active' : '' }}">
-                            <a href="{{ route('customer.riwayat') }}" class="nav-link {{ request()->routeIs('customer.riwayat') ? 'active' : '' }}">
-                            <i class="nav-icon bi bi-card-list"></i>
-                            <p>
-                                Riwayat Pesanan
-                            </p>
-                            </a>
-                        </li>
-                        
-                    @endif
+                                </a>
+                            </li>
+                            <li class="nav-item {{ request()->routeIs('customer.riwayat') ? 'active' : '' }}">
+                                <a href="{{ route('customer.riwayat') }}" class="nav-link {{ request()->routeIs('customer.riwayat') ? 'active' : '' }}">
+                                <i class="nav-icon bi bi-card-list"></i>
+                                <p>
+                                    Riwayat Transaksi
+                                </p>
+                                </a>
+                            </li>
+                            
+                        @endif
 
-                    <li class="nav-item">
-                        <form action="{{ route('logout') }}" method="POST">
-                            @csrf
-                            <button type="submit" class="nav-link btn btn-link text-start w-100">
-                                <i class="nav-icon bi bi-box-arrow-left"></i>
-                                <p>Sign Out</p>
-                            </button>
-                        </form>
-                    </li>
+                        <li class="nav-item">
+                            <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="nav-link btn btn-link text-start w-100">
+                                    <i class="nav-icon bi bi-box-arrow-left"></i>
+                                    <p>Sign Out</p>
+                                </button>
+                            </form>
+                        </li>
                     </ul>
+                    @endauth
                     <!--end::Sidebar Menu-->
                 </nav>
                 </div>

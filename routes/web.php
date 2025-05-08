@@ -34,6 +34,7 @@ Route::post('/logout', function () {
 
 
 Route::get('/scan/{idmeja}', [Customer\MenuController::class, 'scanQRCode'])->name('customer.scan.qrcode');
+Route::post('/konfirmasi', [Customer\MenuController::class, 'konfirmasiPembayaran'])->name('customer.konfirmasi');
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/admin', function() { return redirect()->route('admin.dashboard'); })->name('redirect.admin.dashboard'); 
@@ -62,6 +63,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::middleware(['auth', 'role:kasir'])->group(function () {
     Route::get('/kasir', function() { return redirect()->route('kasir.dashboard'); })->name('redirect.kasir.dashboard'); 
     Route::get('/kasir/dashboard', [Kasir\DashboardController::class, 'index'])->name('kasir.dashboard');
+    Route::post('/kasir/dashboard/proses/{sale}', [Kasir\DashboardController::class, 'proses'])->name('kasir.proses');
+    Route::get('/kasir/struk/{sale}', [Kasir\DashboardController::class, 'struk'])->name('kasir.struk');
+
+    Route::get('/kasir/dashboard/data-penjualan', [Kasir\DashboardController::class, 'getSalesData']);
+
+
     Route::get('/kasir/datasales', [Kasir\DataSalesController::class, 'index'])->name('kasir.datasales');
     Route::get('/kasir/kelolaproduk', [Kasir\KelolaProdukController::class, 'index'])->name('kasir.kelolaproduk');
     Route::get('/kasir/sales', [Kasir\DashboardController::class, 'index'])->name('kasir.sales');
@@ -71,7 +78,8 @@ Route::middleware(['auth', 'role:kasir'])->group(function () {
 Route::middleware(['auth', 'role:customer'])->group(function () {
     Route::get('/', function() { return redirect()->route('customer.menu'); })->name('redirect.customer.menu'); 
     Route::get('/menu', [Customer\MenuController::class, 'index'])->name('customer.menu');
-    Route::get('/keranjang', [Customer\KeranjangController::class, 'index'])->name('customer.keranjang');
     Route::get('/riwayat', [Customer\RiwayatController::class, 'index'])->name('customer.riwayat');
+
+    Route::get('/keranjang', [Customer\KeranjangController::class, 'index'])->name('customer.keranjang');
     Route::get('/profile', [Customer\ProfileController::class, 'index'])->name('customer.profile');
 });

@@ -36,7 +36,7 @@
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $sale->created_at->format('d-m-Y H:i') }}</td>
-                                <td>{{ $sale->meja->nama_meja }}</td>
+                                <td>{{ $sale->meja->nama_meja}}</td>
                                 <td><span class="text-success">Rp {{ number_format($sale->total_harga, 0, ',', '.') }}</span></td>
                                 <td><span class="text-danger">Rp {{ number_format($sale->total_diskon, 0, ',', '.') }}</span></td>
                                 <td><strong>Rp {{ number_format($sale->total_bayar, 0, ',', '.') }}</strong></td>
@@ -54,23 +54,14 @@
                                     </span>
                                 </td>
                                 <td>
-                                    @if ($sale->status_pesanan == 'sedang_diproses' || $sale->status_pesanan == 'belum_diproses' )
-                                        <button class="btn btn-success btn-sm btn-proses-pesanan" data-id="{{ $sale->id }}">
-                                            <i data-feather="check-circle"></i> Tandai Selesai
-                                        </button>                                    
-                                    @else
-                                        <span class="text-muted">Selesai</span>
-                                    @endif
-                                
                                     <button class="btn btn-sm btn-outline-primary btn-detail" type="button" data-bs-toggle="collapse" data-bs-target="#detail-{{ $sale->id }}" aria-expanded="false">
                                         <i data-feather="eye"></i> Detail
                                     </button>
                                 </td>
-                                
                             </tr>
                             <!-- Detail Produk -->
                             <tr class="collapse fade" id="detail-{{ $sale->id }}">
-                                <td colspan="12">
+                                <td colspan="9">
                                     <div class="p-2 rounded">
                                         <h6 class="mb-2">🛒 Detail Produk {{ $sale->created_at->format('d-m-Y H:i') }}</h6>
                                         <table class="table table-sm">
@@ -112,25 +103,6 @@
         
         {{-- end modal notif konfirmasi delete --}}
 
-        <div class="modal fade" id="prosesPesananModal" tabindex="-1" aria-labelledby="prosesPesananModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header bg-success text-white">
-                        <h5 class="modal-title" id="prosesPesananModalLabel">Konfirmasi Penyelesaian Pesanan</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                    </div>
-                    <div class="modal-body">
-                        Apakah Anda yakin ingin menandai pesanan ini sebagai <strong>selesai</strong>?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="batalProses" data-bs-dismiss="modal">Batal</button>
-                        <button id="btnKonfirmasiProses" class="btn btn-success">Ya, Tandai Selesai</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-
     </div>
 </div>
 @endsection
@@ -162,69 +134,20 @@
     });
 </script>
 <script>
-    $(document).ready(function () {
-        let selectedSaleId;
-
-        // Ketika tombol "Tandai Selesai" ditekan
-        $('.btn-proses-pesanan').click(function () {
-            selectedSaleId = $(this).data('id');
-            $('#prosesPesananModal').modal('show');
-        });
-
-        $('#batalProses, .btn-close').click(function () {
-            $('#prosesPesananModal').modal('hide');
-        });
-
-        $('#btnKonfirmasiProses').click(function () {
-            $.ajax({
-                url: `/kasir/dashboard/proses/${selectedSaleId}`,
-                type: "POST",
-                data: {
-                    _token: "{{ csrf_token() }}"
-                },
-                success: function (response) {
-                    location.reload();
-                },
-                error: function (xhr) {
-                    alert('Terjadi kesalahan: ' + (xhr.responseJSON?.error || 'Gagal memproses.'));
-                }
-            });
-        });
+    document.getElementById('gambarInput').addEventListener('change', function(event) {
+        let input = event.target;
+        let preview = document.getElementById('gambarPreview');
+        
+        if (input.files && input.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     });
 </script>
-<script>
-    let lastSaleId = null; // Untuk menyimpan ID transaksi terakhir
-
-    function loadSalesData() {
-        $.ajax({
-            url: '/kasir/dashboard/data-penjualan',
-            type: 'GET',
-            success: function(response) {
-                // Buat elemen HTML sementara untuk membaca ID transaksi pertama
-                let tempDiv = $('<div>').html(response.html);
-                let newFirstId = tempDiv.find('tr').first().find('.btn-proses-pesanan').data('id');
-
-                if (lastSaleId && newFirstId && newFirstId !== lastSaleId) {
-                    document.getElementById('notif-sound').play(); // Putar suara
-                }
-
-                lastSaleId = newFirstId || lastSaleId;
-
-                $('table tbody').html(response.html);
-                feather.replace(); // Refresh ikon
-            },
-            error: function(xhr) {
-                console.error('Gagal memuat data penjualan:', xhr);
-            }
-        });
-    }
-
-    setInterval(loadSalesData, 10000); // Refresh tiap 10 detik
-</script>
-
-
-<audio id="notif-sound" src="{{ asset('storage/audio/notif.wav') }}" preload="auto"></audio>
-
 @endsection
 @section('style')
 <style>
