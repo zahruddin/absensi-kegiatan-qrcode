@@ -364,14 +364,14 @@
                                         </p>
                                 </a>
                             </li>
-                            <li class="nav-item {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
+                            {{-- <li class="nav-item {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
                                 <a href="{{ route('admin.laporanPenjualan') }}" class="nav-link {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
                                     <i class="nav-icon bi bi-speedometer"></i>
                                         <p>
                                             Laporan Penjualan
                                         </p>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
                                 <a href="{{ route('admin.kelolaUsers') }}" class="nav-link {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
                                     <i class="nav-icon bi bi-people"></i>
@@ -408,22 +408,22 @@
                                 </p>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('kasir.datasales') }}" class="nav-link {{ request()->routeIs('kasir.datasales') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-card-list"></i>
                                 <p>
                                     Penjualan
                                 </p>
                                 </a>
-                            </li>
-                            <li class="nav-item">
+                            </li> --}}
+                            {{-- <li class="nav-item">
                                 <a href="{{ route('kasir.kelolaproduk') }}" class="nav-link {{ request()->routeIs('kasir.kelolaproduk') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-card-list"></i>
                                 <p>
                                     Kelola Produk
                                 </p>
                                 </a>
-                            </li>
+                            </li> --}}
                         @endif
                         @if(Auth::user()->role == 'customer')
                             <li class="nav-item {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
