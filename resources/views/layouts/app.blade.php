@@ -76,6 +76,7 @@
     </head>
     <!--end::Head-->
     <!--begin::Body-->
+<audio id="notif-sound" src="{{ asset('audio/notif.wav') }}" preload="auto"></audio>
     <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
         <!--begin::App Wrapper-->
         <div class="app-wrapper">

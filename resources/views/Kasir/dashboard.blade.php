@@ -223,7 +223,6 @@
 </script>
 
 
-<audio id="notif-sound" src="{{ asset('storage/audio/notif.wav') }}" preload="auto"></audio>
 
 @endsection
 @section('style')
