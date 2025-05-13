@@ -298,7 +298,7 @@
                             <!--end::Menu Body-->
                             <!--begin::Menu Footer-->
                             <li class="user-footer">
-                                @if(Auth::user()->role == 'admin')
+                                {{-- @if(Auth::user()->role == 'admin')
                                     <a href="{{ route('admin.profile') }}" class="btn btn-default btn-flat">Profile</a>
                                 @endif
                                 <!-- Menu untuk Kasir -->
@@ -307,7 +307,7 @@
                                 @endif
                                 @if(Auth::user()->role == 'customer')
                                     <a href="{{ route('customer.profile') }}" class="btn btn-default btn-flat">Profile</a>
-                                @endif
+                                @endif --}}
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                     @csrf
                                     <button type="submit" class="btn btn-default btn-flat float-end">Sign Out</button>
@@ -329,17 +329,18 @@
                 <!--begin::Sidebar Brand-->
                 <div class="sidebar-brand">
                 <!--begin::Brand Link-->
-                <a href="./index.html" class="brand-link">
+                <a href="{{ route('login') }}" class="brand-link">
                     <!--begin::Brand Image-->
-                    <img
+                    {{-- <img
                     src="{{ asset('dist/assets/img/AdminLTELogo.png') }}"
                     alt="AdminLTE Logo"
                     class="brand-image opacity-75 shadow"
-                    />
+                    /> --}}
                     <!--end::Brand Image-->
                     <!--begin::Brand Text-->
-                    <span class="brand-text fw-light">Welijo</span>
+                    {{-- <span class="brand-text fw-light">Welijo</span> --}}
                     <!--end::Brand Text-->
+                    <b>WELIJO CAFE</b>
                 </a>
                 <!--end::Brand Link-->
                 </div>

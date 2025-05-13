@@ -66,7 +66,7 @@
             </div>
         </div>
         <!-- /.TABEL card -->
-        {{-- MODAL Tambah Produk --}}
+        {{-- MODAL Tambah user --}}
         <div class="modal fade" id="modalTambahProduct" tabindex="-1" aria-labelledby="modalTambahProductLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">

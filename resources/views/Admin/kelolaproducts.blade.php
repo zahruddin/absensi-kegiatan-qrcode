@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Produk Admin | TrackBooth')
+@section('title', 'Kelola Produk Admin | WELIJO')
 
 @section('page', 'Kelola Produk')
 @section('content')

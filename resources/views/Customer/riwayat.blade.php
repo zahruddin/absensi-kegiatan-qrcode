@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Produk Admin | TrackBooth')
+@section('title', 'RIWAYAT | WELIJO')
 
-@section('page', 'Kelola Produk')
+@section('page', 'RIWAYAT')
 @section('content')
 <div class="app-content">
     <div class="container-fluid">

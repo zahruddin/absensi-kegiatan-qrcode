@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Halaman Kasir | TrackBooth')
-@section('page', 'Halaman Kasir')
+@section('title', 'Menu | WELIJO')
+@section('page', 'Menu')
 @section('style')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @endsection
@@ -95,10 +95,15 @@
                             @foreach($products as $product)
                                 <div class="col-6 col-md-3 col-lg-3 product-item" data-name="{{ strtolower($product->nama_produk) }}">
                                     <div class="card product-card text-center p-2" data-id="{{ $product->id }}">
+                            
                                         @php
-                                            $gambarPath = public_path($product->gambar);
-                                            $gambarURL = file_exists($gambarPath) && !empty($product->gambar) ? asset($product->gambar) : null;
+                                            // Bersihkan path jika ada "storage/" di depan
+                                            $gambarStoragePath = str_replace('storage/', '', $product->gambar);
+                                            $gambarURL = !empty($product->gambar) && Storage::disk('public')->exists($gambarStoragePath)
+                                                ? asset($product->gambar)
+                                                : null;
                                         @endphp
+                            
                                         @if($gambarURL)
                                             <img src="{{ $gambarURL }}" class="card-img-top" alt="{{ $product->nama_produk }}" style="height: 150px;" loading="lazy">
                                         @else
@@ -108,8 +113,7 @@
                                                 </svg>
                                             </div>
                                         @endif
-                                    
-                                        {{-- <img src="{{ asset($product->gambar) }}"  class="card-img-top" alt="{{ $product->nama_produk }}" style="height: 150px; " loading="lazy"> --}}
+                            
                                         <div class="card-body d-flex flex-column justify-content-between">
                                             <h6 class="card-title fw-bold">{{ $product->nama_produk }}</h6>
                                             <p class="text-primary fs-6 mb-1">Rp {{ number_format($product->harga_produk, 0, ',', '.') }}</p>
