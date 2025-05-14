@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin;
@@ -26,6 +27,8 @@ Route::get('/', function () {
 
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Halaman login
 Route::post('/login', [LoginController::class, 'login']); // Proses login
+Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
 
 Route::post('/logout', function () {
     Auth::logout();  // Menjalankan proses logout

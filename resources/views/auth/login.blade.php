@@ -44,15 +44,8 @@
                 <p class="login-box-msg">Sign in to start your session</p>
 
                 {{-- Menampilkan error jika ada --}}
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+                @include('components.alert')
+
 
                 <form action="{{ route('login') }}" method="POST">
                     @csrf
@@ -77,6 +70,7 @@
                     </div>
                 
                     <div class="row">
+                        <a href="{{ route('register')}}" style="">Belum Punya Akun?</a>
                         <div class="col-8">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="remember" id="rememberMe" {{ old('remember') ? 'checked' : '' }}>
