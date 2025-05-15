@@ -46,7 +46,7 @@ class kelolaUserController extends Controller
 
         // Update data produk tanpa mengganti gambar jika tidak ada gambar baru
         $user->update([
-            'name'  => $request->nama_meja
+            'name'  => $request->name
         ]);
 
         return redirect()->back()->with('success', 'Nama User berhasil diperbarui.');
