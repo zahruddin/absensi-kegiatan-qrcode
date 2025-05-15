@@ -35,5 +35,38 @@ class kelolaUserController extends Controller
         return redirect()->route('admin.kelolaUsers')->with('success', 'User berhasil ditambahkan');
     }
 
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+        ]);
+
+        $user = User::findOrFail($id);
+
+        // Update data produk tanpa mengganti gambar jika tidak ada gambar baru
+        $user->update([
+            'name'  => $request->nama_meja
+        ]);
+
+        return redirect()->back()->with('success', 'Nama User berhasil diperbarui.');
+    }
+    public function delete($id)
+    {
+        try {
+            // Cari meja berdasarkan id
+            $user = User::where('id', $id)->firstOrFail();
+
+            // Hapus meja dari database
+            $user->delete();
+
+            // Berikan notifikasi sukses
+            session()->flash('success', 'User berhasil dihapus!');
+            return response()->json(['success' => 'User berhasil dihapus!']);
+        } catch (\Exception $e) {
+            // Menangani kesalahan dan mengembalikan pesan error
+            return response()->json(['error' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
 }
 
