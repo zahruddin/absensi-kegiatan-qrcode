@@ -35,7 +35,7 @@ class Sale extends Model
     }
     public function meja()
     {
-        return $this->belongsTo(Table::class, 'id_meja'); 
+        return $this->belongsTo(Table::class, 'id_meja')->withTrashed(); 
     }
 
 }

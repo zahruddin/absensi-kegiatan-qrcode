@@ -31,12 +31,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @php $no = $sales->firstItem(); @endphp
+                        @php $no = $sales->firstItem(); 
+                        
+                        @endphp
+                        
                         @foreach($sales as $sale)
                             <tr>
                                 <td>{{ $no++ }}</td>
                                 <td>{{ $sale->created_at->format('d-m-Y H:i') }}</td>
-                                <td>{{ $sale->meja->nama_meja}}</td>
+                                    <td>{{ optional($sale->meja)->nama_meja ?? '-' }}</td>
+
+
                                 <td><span class="text-success">Rp {{ number_format($sale->total_harga, 0, ',', '.') }}</span></td>
                                 <td><span class="text-danger">Rp {{ number_format($sale->total_diskon, 0, ',', '.') }}</span></td>
                                 <td><strong>Rp {{ number_format($sale->total_bayar, 0, ',', '.') }}</strong></td>

@@ -35,7 +35,7 @@ class MenuController extends Controller
         // Ambil semua produk dari database
         $meja = $mejaId ? Table::find($mejaId) : null; // Kirim model meja
         $products = Product::all();
-        $tables = Table::all(); 
+        $tables = Table::where('status', 'ready')->get();
 
 
         // Kirim data ke view

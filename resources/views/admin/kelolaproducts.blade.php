@@ -44,8 +44,7 @@
                                     <td>{{ $product->nama_produk }}</td>
                                     <td>
                                         @php
-                                            $gambarPath = public_path($product->gambar);
-                                            $gambarURL = file_exists($gambarPath) && !empty($product->gambar) ? asset($product->gambar) : null;
+                                            $gambarURL = !empty($product->gambar) ? asset($product->gambar) : null;
                                         @endphp
                                     
                                         @if($gambarURL)

@@ -20,4 +20,10 @@ class Table extends Model
     protected $casts = [
         'status' => 'string',
     ];
+    
+    
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'id_meja');
+    }
 }
