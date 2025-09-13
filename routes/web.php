@@ -68,7 +68,7 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
     });
 
     // ====== SESI absensi / ======
-    Route::prefix('operator/kegiatan/{id_kegiatan}/kategori')->name('operator.kegiatan.kategori.')->group(function () {
+    Route::prefix('operator/kegiatan/{id_kegiatan}/sesi')->name('operator.kegiatan.sesi.')->group(function () {
         Route::post('/store', [Operator\KategoriAbsensiController::class, 'store'])->name('store');
         Route::put('/update/{id}', [Operator\KategoriAbsensiController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [Operator\KategoriAbsensiController::class, 'delete'])->name('delete');
@@ -90,12 +90,20 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
 
     // ====== ABSENSI / SCAN ======
     Route::prefix('operator/absensi')->name('operator.absensi.')->group(function () {
-        Route::get('/{id}', [Operator\AbsensiController::class, 'show'])->name('show');
-        Route::get('/scan/{id}', [Operator\ScanController::class, 'index'])->name('scan');
-        Route::post('/manual/{id_peserta}', [Operator\AbsensiController::class, 'manual'])->name('manual');
-        Route::post('/cancel/{id_peserta}', [Operator\AbsensiController::class, 'cancel'])->name('cancel');
+        // Menampilkan daftar peserta yang sudah absen di sebuah sesi
+        Route::get('/show/{sesi_absensi}', [Operator\AbsensiController::class, 'show'])->name('show');
+        // Ganti route 'scan' lama Anda dengan ini
+        Route::get('/scan/{sesi_absensi}', [Operator\AbsensiController::class, 'scan'])->name('scan');
+
+        // Tambahkan route baru ini untuk memproses data dari scanner
+        Route::post('/scan/process', [Operator\AbsensiController::class, 'processScan'])->name('scan.process');
+        // ✅ Menyimpan absensi manual (tanpa parameter di URL)
+        Route::post('/manual', [Operator\AbsensiController::class, 'storeManual'])->name('manual');
+
+        // ✅ Membatalkan absensi manual (menggunakan method DELETE yang lebih tepat)
+        Route::delete('/cancel', [Operator\AbsensiController::class, 'cancelManual'])->name('cancel');
     });
-    
+        
 
 
 });

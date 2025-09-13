@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Absensi;
 use App\Models\Kegiatan;
-use App\Models\KategoriAbsensi;
+use App\Models\SesiAbsensi;
 use App\Models\Peserta;
 use Illuminate\Database\Seeder;
 
@@ -28,7 +28,7 @@ class RelationalSeeder extends Seeder
             $kategoriNama = ['Absen Masuk', 'Absen Sesi Siang', 'Absen Pulang'];
             foreach ($kategoriNama as $nama) {
                 $kategoriList->push(
-                    KategoriAbsensi::factory()->create([
+                    SesiAbsensi::factory()->create([
                         'id_kegiatan' => $kegiatan->id,
                         'nama' => $nama,
                     ])
@@ -44,7 +44,7 @@ class RelationalSeeder extends Seeder
                 foreach ($kategoriDipilih as $kategori) {
                     Absensi::factory()->create([
                         'id_peserta' => $peserta->id,
-                        'id_kategori' => $kategori->id,
+                        'id_sesi' => $kategori->id,
                     ]);
                 }
             }

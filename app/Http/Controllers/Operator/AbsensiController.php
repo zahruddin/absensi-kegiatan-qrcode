@@ -3,52 +3,124 @@
 namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Absensi;
-use App\Models\KategoriAbsensi;
-use Carbon\Carbon;
+use App\Models\SesiAbsensi;
+use App\Models\Peserta;
+use Illuminate\Http\Request;
 
 class AbsensiController extends Controller
 {
     /**
-     * Absen manual peserta.
-     *
-     * @param  int  $id  ID peserta
-     * @param  int  $kategoriId  ID sesi absensi
-     * @return \Illuminate\Http\RedirectResponse
+     * Menampilkan daftar peserta yang sudah diabsen pada sesi tertentu.
      */
-    public function manual(Request $request, $id_peserta)
+    public function show(SesiAbsensi $sesi_absensi)
     {
-        $request->validate([
-            'id_kategori' => 'required|exists:kategori_absensi,id',
-        ]);
+        // Load data absensi beserta relasi pesertanya untuk ditampilkan
+        $absensi = Absensi::where('id_sesi', $sesi_absensi->id)->with('peserta')->get();
 
-        Absensi::create([
-            'id_peserta' => $id_peserta,
-            'id_kategori' => $request->id_kategori,
-            'datetime' => now(),
-        ]);
-
-        return back()->with('success', 'Absensi manual berhasil ditambahkan.');
+        return view('operator.absensi.show', compact('sesi_absensi', 'absensi'));
     }
-    public function cancel(Request $request, $id_peserta)
+
+    public function scan(SesiAbsensi $sesi_absensi)
     {
+        // Load relasi kegiatan untuk ditampilkan di view
+        $sesi_absensi->load('kegiatan');
+        
+        return view('operator.scan', compact('sesi_absensi'));
+    }
+
+    /**
+     * Memproses hasil pindaian QR Code yang dikirim via AJAX.
+     */
+    public function processScan(Request $request)
+    {
+        // 1. Validasi data yang masuk
         $request->validate([
-            'id_kategori' => 'required|exists:kategori_absensi,id',
+            'token'   => 'required|string',
+            'id_sesi' => 'required|exists:sesi_absensi,id',
         ]);
 
-        $absensi = Absensi::where('id_peserta', $id_peserta)
-                        ->where('id_kategori', $request->id_kategori)
-                        ->first();
+        // 2. Cari peserta berdasarkan token unik dari QR Code
+        $peserta = Peserta::where('token', $request->token)->first();
 
-        if (!$absensi) {
-            return back()->with('error', 'Peserta belum absen di sesi ini.');
+        // 3. Jika token tidak valid atau peserta tidak ditemukan
+        if (!$peserta) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'QR Code tidak valid atau tidak terdaftar.'
+            ], 404);
         }
 
-        $absensi->delete();
+        // 4. Periksa apakah peserta sudah diabsen di sesi ini sebelumnya
+        $isAlreadyAbsen = Absensi::where('id_peserta', $peserta->id)
+                                 ->where('id_sesi', $request->id_sesi)
+                                 ->exists();
+        
+        if ($isAlreadyAbsen) {
+            return response()->json([
+                'status'  => 'warning',
+                'message' => 'Peserta ' . $peserta->nama . ' sudah diabsen sebelumnya di sesi ini.'
+            ], 409); // 409 Conflict
+        }
 
-        return back()->with('success', 'Absensi peserta berhasil dibatalkan.');
+        // 5. Jika semua pemeriksaan lolos, buat record absensi baru
+        Absensi::create([
+            'id_peserta'  => $peserta->id,
+            'id_sesi'     => $request->id_sesi,
+            'waktu_absen' => now(),
+        ]);
+
+        // 6. Kirim respons sukses
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Berhasil! Absensi untuk ' . $peserta->nama . ' telah dicatat.'
+        ]);
+    }
+    
+    /**
+     * Menyimpan data absensi baru secara manual.
+     * Mencegah data duplikat jika peserta sudah diabsen di sesi yang sama.
+     */
+    public function storeManual(Request $request)
+    {
+        // 1. Validasi input dari form modal
+        $request->validate([
+            'id_peserta' => 'required|exists:peserta,id',
+            'id_sesi'    => 'required|exists:sesi_absensi,id',
+        ]);
+
+        // 2. Gunakan firstOrCreate untuk menyimpan data dengan aman
+        // Ini akan mencegah duplikasi jika peserta sudah diabsen pada sesi yang sama.
+        Absensi::firstOrCreate(
+            [
+                'id_peserta' => $request->id_peserta,
+                'id_sesi'    => $request->id_sesi,
+            ],
+            [
+                // Kolom ini hanya akan diisi jika data BARU dibuat
+                'waktu_absen' => now(), 
+            ]
+        );
+
+        return redirect()->back()->with('success', 'Peserta berhasil diabsen.');
     }
 
+    /**
+     * Membatalkan (menghapus) data absensi yang sudah ada.
+     */
+    public function cancelManual(Request $request)
+    {
+        // 1. Validasi input dari form modal
+        $request->validate([
+            'id_peserta' => 'required|exists:peserta,id',
+            'id_sesi'    => 'required|exists:sesi_absensi,id',
+        ]);
 
+        // 2. Cari dan hapus record absensi yang cocok
+        Absensi::where('id_peserta', $request->id_peserta)
+               ->where('id_sesi', $request->id_sesi)
+               ->delete();
+
+        return redirect()->back()->with('success', 'Absensi untuk peserta berhasil dibatalkan.');
+    }
 }

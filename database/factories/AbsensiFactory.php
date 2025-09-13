@@ -10,7 +10,7 @@ class AbsensiFactory extends Factory
     {
         return [
             // id_peserta dan id_kategori akan di-set dari Seeder
-            'datetime' => fake()->dateTimeBetween('-1 week', 'now'),
+            'waktu_absen' => fake()->dateTimeBetween('-1 week', 'now'),
         ];
     }
 }

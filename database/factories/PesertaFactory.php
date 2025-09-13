@@ -18,6 +18,7 @@ class PesertaFactory extends Factory
             'nim' => '2215' . fake()->unique()->numerify('######'),
             'kelompok' => fake()->numberBetween(1, 10),
             'qrcode' => Str::random(15),
+            'token' => Str::random(40),
         ];
     }
 }

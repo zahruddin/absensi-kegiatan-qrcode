@@ -11,14 +11,17 @@ return new class extends Migration
      */
      public function up(): void
     {
-        Schema::create('kategori_absensi', function (Blueprint $table) {
-            $table->id(); // int, primary key, auto-increment
-
-            // Foreign key ke tabel kegiatan
+        Schema::create('sesi_absensi', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('id_kegiatan');
             $table->foreign('id_kegiatan')->references('id')->on('kegiatan')->onDelete('cascade');
-            
             $table->string('nama', 250);
+            $table->enum('status', ['aktif', 'tidak aktif'])->default('tidak aktif')->nullable();
+            
+            // ✅ Tambahan kolom untuk waktu mulai dan selesai
+            $table->datetime('waktu_mulai')->nullable();
+            $table->datetime('waktu_selesai')->nullable();
+            
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategori_absensi');
+        Schema::dropIfExists('sesi_absensi');
     }
 };

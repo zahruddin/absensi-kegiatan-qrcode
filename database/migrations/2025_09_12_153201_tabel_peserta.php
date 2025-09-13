@@ -20,12 +20,13 @@ return new class extends Migration
             $table->foreign('id_kegiatan')->references('id')->on('kegiatan')->onDelete('cascade');
 
             $table->string('nama', 250);
-            $table->string('email', 250);
-            $table->string('no_hp', 250);
-            $table->string('prodi', 250);
-            $table->string('nim', 250);
-            $table->string('kelompok', 250);
+            $table->string('email', 250)->nullable();
+            $table->string('no_hp', 250)->nullable();
+            $table->string('prodi', 250)->nullable();
+            $table->string('nim', 250)->nullable();
+            $table->string('kelompok', 250)->nullable();
             $table->string('qrcode', 250)->nullable();
+            $table->string('token', 250)->nullable();
             $table->timestamps();
         });
     }

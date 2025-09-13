@@ -18,7 +18,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Jumlah Peserta</h5>
-                        <h2>{{ $kegiatan->peserta()->count() ?? 0 }}</h2>
+                        <h2>{{ $kegiatan->peserta_count }}</h2>
                     </div>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Sudah Hadir</h5>
-                        <h2 class="text-success">{{ $absensi->where('status', 'hadir')->count() ?? 0 }}</h2>
+                        <h2 class="text-success">{{ $jumlahHadir }}</h2>
                     </div>
                 </div>
             </div>
@@ -38,9 +38,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Belum Hadir</h5>
-                        <h2 class="text-danger">
-                            {{ ($kegiatan->peserta()->count() ?? 0) - ($absensi->where('status', 'hadir')->count() ?? 0) }}
-                        </h2>
+                        <h2 class="text-danger">{{ $jumlahBelumHadir }}</h2>
                     </div>
                 </div>
             </div>
@@ -50,7 +48,7 @@
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Total Sesi Absensi</h5>
-                        <h2>{{ $kategoriAbsensi->count() }}</h2>
+                        <h2>{{ $sesiAbsensi->count() }}</h2>
                     </div>
                 </div>
             </div>
@@ -70,45 +68,52 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Sesi</th>
-                            <th>Tanggal</th>
+                            <th>Waktu Mulai</th>
                             <th>Jumlah Hadir</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($kategoriAbsensi as $index => $kategori)
+                        {{-- Loop menggunakan variabel baru: $sesiAbsensi as $sesi --}}
+                        @foreach ($sesiAbsensi as $index => $sesi)
                             <tr>
-                                <td>{{ $index+1 }}</td>
-                                <td>{{ $kategori->nama }}</td>
-                                <td>{{ $kategori->tanggal ?? '-' }}</td>
-                                <td>{{ $absensi->where('id_kategori_absensi', $kategori->id)->count() }}</td>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $sesi->nama }}</td>
+                                
+                                {{-- Menampilkan waktu_mulai dan memformatnya. Pastikan kolom ini ada. --}}
+                                <td>{{ $sesi->waktu_mulai->format('d M Y, H:i') }}</td>
+                                
+                                {{-- Menampilkan jumlah hadir dari hasil withCount --}}
+                                <td>{{ $sesi->absensi_count }}</td>
+                                
                                 <td>
-                                    {{-- Lihat peserta absensi --}}
-                                    <a href="{{ route('operator.absensi.show', $kategori->id) }}" class="btn btn-info btn-sm">
+                                    {{-- Tombol Lihat Peserta --}}
+                                    <a href="{{ route('operator.absensi.show', $sesi->id) }}" class="btn btn-info btn-sm">
                                         <i class="bi bi-eye"></i> Lihat Peserta
                                     </a>
-                                    {{-- Scan QR --}}
-                                    <a href="{{ route('operator.absensi.scan', $kategori->id) }}" class="btn btn-success btn-sm">
+                                    
+                                    {{-- Tombol Scan QR --}}
+                                    <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm">
                                         <i class="bi bi-qr-code-scan"></i> Scan QR
                                     </a>
+                                    
                                     {{-- Tombol Edit Sesi --}}
                                     <button class="btn btn-secondary btn-sm btn-edit-sesi"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editSesiModal"
-                                        data-id="{{ $kategori->id }}"
-                                        data-nama="{{ $kategori->nama }}">
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editSesiModal"
+                                            data-id="{{ $sesi->id }}"
+                                            data-nama="{{ $sesi->nama }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
                                     {{-- Tombol Hapus Sesi --}}
                                     <button class="btn btn-danger btn-sm btn-hapus-sesi"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#hapusSesiModal"
-                                        data-id="{{ $kategori->id }}"
-                                        data-nama="{{ $kategori->nama }}">
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#hapusSesiModal"
+                                            data-id="{{ $sesi->id }}"
+                                            data-nama="{{ $sesi->nama }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
-
                                 </td>
                             </tr>
                         @endforeach
@@ -122,17 +127,12 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Data Peserta</h5>
                 <div>
-                    {{-- Export Excel --}}
-                    {{-- Export Peserta (langsung jalan tanpa modal) --}}
                     <a href="{{ route('operator.peserta.export', $kegiatan->id) }}" class="btn btn-success btn-sm">
                         <i class="bi bi-file-earmark-excel"></i> Export Excel
                     </a>
-
-                    {{-- Import Peserta (pakai modal) --}}
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#importPesertaModal">
                         <i class="bi bi-upload"></i> Import Peserta
                     </button>
-                    {{-- Tombol Tambah Peserta --}}
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#tambahPesertaModal">
                         <i class="bi bi-plus-circle"></i> Tambah Peserta
                     </button>
@@ -144,61 +144,75 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Peserta</th>
-                            <th>Status Hadir</th>
+                            {{-- Tampilkan nama sesi sebagai header kolom status --}}
+                            @foreach ($sesiAbsensi as $sesi)
+                                <th class="text-center">{{ $sesi->nama }}</th>
+                            @endforeach
                             <th>QR Code</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($kegiatan->peserta as $i => $p)
+                        {{-- Loop peserta yang sudah di-eager load --}}
+                        @foreach ($kegiatan->peserta as $index => $peserta)
                             <tr>
-                                <td>{{ $i+1 }}</td>
-                                <td>{{ $p->nama }}</td>
-                                <td>
-                                    @foreach($kategoriAbsensi as $kategori)
-                                        @php
-                                            $sudahHadir = $absensi
-                                                ->where('id_peserta', $p->id)
-                                                ->where('id_kategori', $kategori->id)
-                                                ->count() > 0;
-                                        @endphp
-
-                                        @if($sudahHadir)
-                                            <i class="bi bi-check-circle-fill text-success"></i>
+                                <td>{{ $index + 1 }}</td>
+                                <td>{{ $peserta->nama }}</td>
+                                
+                                {{-- Cek kehadiran untuk setiap sesi dengan lookup cepat --}}
+                                @foreach($sesiAbsensi as $sesi)
+                                    <td class="text-center">
+                                        @if(isset($kehadiranPeserta[$peserta->id]) && $kehadiranPeserta[$peserta->id]->contains($sesi->id))
+                                            <i class="bi bi-check-circle-fill text-success" title="Hadir"></i>
                                         @else
-                                            <i class="bi bi-x-circle-fill text-danger"></i>
+                                            <i class="bi bi-x-circle-fill text-danger" title="Tidak Hadir"></i>
                                         @endif
-                                    @endforeach
-                                </td>
+                                    </td>
+                                @endforeach
+
                                 <td>
-                                    @if($p->qrcode)
-                                        <img src="{{ asset('storage/'.$p->qrcode) }}" alt="QR Code {{ $p->nama }}" width="50">
+                                    @if($peserta->qrcode)
+                                        <img src="{{ asset('storage/'.$peserta->qrcode) }}" alt="QR Code {{ $peserta->nama }}" width="50">
                                     @else
-                                        <span class="text-muted">QR belum tersedia</span>
+                                        <span class="text-muted">N/A</span>
                                     @endif
                                 </td>
                                 <td>
-                                    {{-- Absen Manual --}}
+                                    {{-- Tombol Absen Manual --}}
                                     <button class="btn btn-success btn-sm btn-absen-manual" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#absenManualModal"
-                                        data-id="{{ $p->id }}"
-                                        data-nama="{{ $p->nama }}">
-                                        <i class="bi bi-check-circle"></i> Absen Manual
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#absenManualModal"
+                                            data-id-peserta="{{ $peserta->id }}"
+                                            data-nama-peserta="{{ $peserta->nama }}">
+                                        <i class="bi bi-check-circle"></i>
+                                    </button>
+                                    
+                                    {{-- ✅ TOMBOL EDIT PESERTA (BARU) --}}
+                                    <button class="btn btn-warning btn-sm btn-edit-peserta"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editPesertaModal"
+                                            data-id="{{ $peserta->id }}"
+                                            data-nama="{{ $peserta->nama }}"
+                                            data-email="{{ $peserta->email }}"
+                                            data-no_hp="{{ $peserta->no_hp }}"
+                                            data-prodi="{{ $peserta->prodi }}"
+                                            data-nim="{{ $peserta->nim }}"
+                                            data-kelompok="{{ $peserta->kelompok }}">
+                                        <i class="bi bi-pencil-square"></i>
                                     </button>
 
+                                    {{-- Tombol Hapus Peserta --}}
                                     <button class="btn btn-danger btn-sm btn-hapus-peserta"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#hapusPesertaModal"
-                                        data-id="{{ $p->id }}"
-                                        data-nama="{{ $p->nama }}">
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#hapusPesertaModal"
+                                            data-id="{{ $peserta->id }}"
+                                            data-nama="{{ $peserta->nama }}">
                                         <i class="bi bi-trash"></i>
                                     </button>
-
-
-                                    {{-- Download QR Code --}}
-                                    <a href="{{ route('operator.peserta.download_qrcode', $p->id) }}" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-download"></i> QR Code
+                                    
+                                    {{-- Tombol Download QR Code --}}
+                                    <a href="{{ route('operator.peserta.download_qrcode', $peserta->id) }}" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-download"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -216,17 +230,56 @@
 <div class="modal fade" id="tambahSesiModal" tabindex="-1" aria-labelledby="tambahSesiModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="{{ route('operator.kegiatan.kategori.store', $kegiatan->id) }}" method="POST">
+            <form action="{{ route('operator.kegiatan.sesi.store', $kegiatan->id) }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="tambahSesiModalLabel">Tambah Sesi Absensi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                 </div>
                 <div class="modal-body">
+                    
                     <div class="mb-3">
                         <label for="nama" class="form-label">Nama Sesi</label>
-                        <input type="text" class="form-control" id="nama" name="nama" placeholder="Contoh: Sesi 1 - Pagi" required>
+                        <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama" name="nama" value="{{ old('nama') }}" required>
+                        @error('nama')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label for="tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control @error('tanggal_mulai') is-invalid @enderror" id="tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required>
+                            @error('tanggal_mulai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="jam_mulai" class="form-label">Jam Mulai</label>
+                            <input type="time" class="form-control @error('jam_mulai') is-invalid @enderror" id="jam_mulai" name="jam_mulai" value="{{ old('jam_mulai') }}" required>
+                            @error('jam_mulai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label for="tanggal_selesai" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control @error('tanggal_selesai') is-invalid @enderror" id="tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required>
+                             @error('tanggal_selesai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="jam_selesai" class="form-label">Jam Selesai</label>
+                            <input type="time" class="form-control @error('jam_selesai') is-invalid @enderror" id="jam_selesai" name="jam_selesai" value="{{ old('jam_selesai') }}" required>
+                             @error('jam_selesai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
@@ -236,6 +289,17 @@
         </div>
     </div>
 </div>
+
+@if ($errors->any())
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var myModal = new bootstrap.Modal(document.getElementById('tambahSesiModal'));
+        myModal.show();
+    });
+</script>
+@endif
+
+
 <div class="modal fade" id="editSesiModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form id="formEditSesi" method="POST">
@@ -260,7 +324,7 @@
         </form>
     </div>
 </div>
-
+{{-- hapus sesi --}}
 <div class="modal fade" id="hapusSesiModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form id="formHapusSesi" method="POST">
@@ -346,25 +410,25 @@
                     {{-- Email --}}
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Peserta</label>
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Masukkan email peserta" required>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Masukkan email peserta" >
                     </div>
 
                     {{-- Nomor HP --}}
                     <div class="mb-3">
                         <label for="no_hp" class="form-label">No. HP</label>
-                        <input type="text" name="no_hp" id="no_hp" class="form-control" placeholder="Masukkan nomor HP" required>
+                        <input type="text" name="no_hp" id="no_hp" class="form-control" placeholder="Masukkan nomor HP" >
                     </div>
 
                     {{-- Program Studi --}}
                     <div class="mb-3">
                         <label for="prodi" class="form-label">Program Studi</label>
-                        <input type="text" name="prodi" id="prodi" class="form-control" placeholder="Masukkan program studi" required>
+                        <input type="text" name="prodi" id="prodi" class="form-control" placeholder="Masukkan program studi" >
                     </div>
 
                     {{-- NIM --}}
                     <div class="mb-3">
                         <label for="nim" class="form-label">NIM</label>
-                        <input type="text" name="nim" id="nim" class="form-control" placeholder="Masukkan NIM" required>
+                        <input type="text" name="nim" id="nim" class="form-control" placeholder="Masukkan NIM" >
                     </div>
 
                     {{-- Kelompok --}}
@@ -388,21 +452,24 @@
 {{-- Modal Absen Manual --}}
 <div class="modal fade" id="absenManualModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="formAbsenManual" method="POST">
+        {{-- Form action akan diisi oleh JavaScript --}}
+        <form id="formAbsenManual" method="POST" action="#"> 
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Absensi Manual - <span id="pesertaNama"></span></h5>
+                    <h5 class="modal-title">Absensi Manual - <span id="pesertaNama">Nama Peserta</span></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="id_peserta" id="idPeserta">
                     <div class="mb-3">
-                        <label for="id_kategori" class="form-label">Pilih Sesi Absensi</label>
-                        <select name="id_kategori" class="form-select" required>
+                        <label for="id_sesi" class="form-label">Pilih Sesi Absensi</label>
+                        {{-- NAME INPUT DIPERBARUI menjadi id_sesi --}}
+                        <select name="id_sesi" id="id_sesi" class="form-select" required>
                             <option value="">-- Pilih Sesi --</option>
-                            @foreach($kategoriAbsensi as $kategori)
-                                <option value="{{ $kategori->id }}">{{ $kategori->nama }}</option>
+                            {{-- NAMA VARIABEL DIPERBARUI menjadi $sesiAbsensi --}}
+                            @foreach($sesiAbsensi as $sesi)
+                                <option value="{{ $sesi->id }}">{{ $sesi->nama }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -410,13 +477,12 @@
                 <div class="modal-footer d-flex justify-content-between">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     <div>
-                        <button type="submit" formaction="{{ route('operator.absensi.cancel', 0) }}" 
-                            formmethod="POST" class="btn btn-warning" id="btnCancelAbsen">
-                            @csrf
+                        {{-- Tombol Batalkan Absen --}}
+                        <button type="submit" class="btn btn-warning" id="btnCancelAbsen">
                             <i class="bi bi-x-circle"></i> Batalkan Absensi
                         </button>
-                        <button type="submit" formaction="{{ route('operator.absensi.manual', 0) }}" 
-                            class="btn btn-success" id="btnSaveAbsen">
+                        {{-- Tombol Simpan Absen --}}
+                        <button type="submit" class="btn btn-success" id="btnSaveAbsen">
                             <i class="bi bi-check-circle"></i> Simpan Absensi
                         </button>
                     </div>
@@ -426,6 +492,52 @@
     </div>
 </div>
 
+{{-- edit peserta --}}
+<div class="modal fade" id="editPesertaModal" tabindex="-1" aria-labelledby="editPesertaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            {{-- Action form akan diatur oleh JavaScript --}}
+            <form id="formEditPeserta" method="POST" action="#">
+                @csrf
+                @method('PUT') {{-- <-- Penting untuk method update --}}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPesertaModalLabel">Edit Data Peserta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_nama" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="edit_nama" name="nama" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_nim" class="form-label">NIM</label>
+                        <input type="text" class="form-control" id="edit_nim" name="nim" >
+                    </div>
+                     <div class="mb-3">
+                        <label for="edit_email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit_email" name="email">
+                    </div>
+                     <div class="mb-3">
+                        <label for="edit_no_hp" class="form-label">No. HP</label>
+                        <input type="text" class="form-control" id="edit_no_hp" name="no_hp">
+                    </div>
+                     <div class="mb-3">
+                        <label for="edit_prodi" class="form-label">Program Studi</label>
+                        <input type="text" class="form-control" id="edit_prodi" name="prodi">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_kelompok" class="form-label">Kelompok</label>
+                        <input type="text" class="form-control" id="edit_kelompok" name="kelompok">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Update Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 {{-- Modal Konfirmasi Hapus Peserta --}}
 <div class="modal fade" id="hapusPesertaModal" tabindex="-1" aria-hidden="true">
@@ -522,32 +634,98 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Absen Manual
-        document.querySelectorAll(".btn-absen-manual").forEach(btn => {
-            btn.addEventListener("click", function () {
-                let id = this.dataset.id;
-                let nama = this.dataset.nama;
 
-                document.getElementById("pesertaNama").textContent = nama;
-                document.getElementById("idPeserta").value = id;
+        // ===========================================
+        // LOGIKA UNTUK MODAL ABSEN MANUAL
+        // ===========================================
+        const absenManualModal = document.getElementById('absenManualModal');
+        if (absenManualModal) {
+            absenManualModal.addEventListener('show.bs.modal', function (event) {
+                // ... (kode untuk mengambil dan mengisi data id_peserta & nama_peserta tetap sama)
+                const button = event.relatedTarget;
+                const idPeserta = button.getAttribute('data-id-peserta');
+                const namaPeserta = button.getAttribute('data-nama-peserta');
+                absenManualModal.querySelector('#pesertaNama').textContent = namaPeserta;
+                absenManualModal.querySelector('#idPeserta').value = idPeserta;
+                
+                const form = absenManualModal.querySelector('#formAbsenManual');
+                const btnSave = absenManualModal.querySelector('#btnSaveAbsen');
+                const btnCancel = absenManualModal.querySelector('#btnCancelAbsen');
+                
+                // Hapus input _method jika ada dari klik sebelumnya
+                const existingMethodInput = form.querySelector('input[name="_method"]');
+                if (existingMethodInput) {
+                    existingMethodInput.remove();
+                }
 
-                // Ganti action form sesuai ID
-                document.getElementById("btnSaveAbsen").setAttribute("formaction", `/operator/absensi/manual/${id}`);
-                document.getElementById("btnCancelAbsen").setAttribute("formaction", `/operator/absensi/cancel/${id}`);
+                // Atur action untuk tombol Simpan (POST)
+                btnSave.onclick = function() {
+                    form.setAttribute('action', "{{ route('operator.absensi.manual') }}");
+                };
+
+                // Atur action untuk tombol Batalkan (DELETE)
+                btnCancel.onclick = function() {
+                    form.setAttribute('action', "{{ route('operator.absensi.cancel') }}");
+                    // Tambahkan input _method untuk spoofing DELETE
+                    if (!form.querySelector('input[name="_method"]')) {
+                        const methodInput = document.createElement('input');
+                        methodInput.type = 'hidden';
+                        methodInput.name = '_method';
+                        methodInput.value = 'DELETE';
+                        form.appendChild(methodInput);
+                    }
+                };
             });
-        });
+        }
+       
+        // ===========================================
+        // LOGIKA UNTUK MODAL EDIT PESERTA
+        // ===========================================
+        const editPesertaModal = document.getElementById('editPesertaModal');
+        if (editPesertaModal) {
+            editPesertaModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const form = editPesertaModal.querySelector('#formEditPeserta');
 
-        // Hapus Peserta
-        document.querySelectorAll(".btn-hapus-peserta").forEach(btn => {
-            btn.addEventListener("click", function () {
-                let id = this.dataset.id;
-                let nama = this.dataset.nama;
+                // ✅ Gunakan placeholder unik
+                let actionUrl = "{{ route('operator.peserta.update', 'PLACEHOLDER') }}".replace('PLACEHOLDER', id);
+                form.setAttribute('action', actionUrl);
 
-                document.getElementById("hapusPesertaNama").textContent = nama;
-                document.getElementById("formHapusPeserta").setAttribute("action", `/operator/peserta/delete/${id}`);
+                // Isi nilai ke setiap input di form
+                form.querySelector('#edit_nama').value = button.getAttribute('data-nama');
+                form.querySelector('#edit_email').value = button.getAttribute('data-email');
+                form.querySelector('#edit_no_hp').value = button.getAttribute('data-no_hp');
+                form.querySelector('#edit_prodi').value = button.getAttribute('data-prodi');
+                form.querySelector('#edit_nim').value = button.getAttribute('data-nim');
+                form.querySelector('#edit_kelompok').value = button.getAttribute('data-kelompok');
             });
-        });
+        }
+
+        // ===========================================
+        // LOGIKA UNTUK MODAL HAPUS PESERTA
+        // ===========================================
+        const hapusPesertaModal = document.getElementById('hapusPesertaModal');
+        if(hapusPesertaModal) {
+            hapusPesertaModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const id = button.getAttribute('data-id');
+                const nama = button.getAttribute('data-nama');
+                const formHapus = hapusPesertaModal.querySelector('#formHapusPeserta');
+
+                // Tampilkan nama peserta yang akan dihapus
+                const namaPesertaSpan = hapusPesertaModal.querySelector('#hapusPesertaNama');
+                if(namaPesertaSpan) {
+                    namaPesertaSpan.textContent = nama;
+                }
+
+                // ✅ Gunakan placeholder unik
+                let actionUrl = "{{ route('operator.peserta.delete', 'PLACEHOLDER') }}".replace('PLACEHOLDER', id);
+                if(formHapus) {
+                    formHapus.setAttribute("action", actionUrl);
+                }
+            });
+        }
     });
 </script>
-
 @endsection

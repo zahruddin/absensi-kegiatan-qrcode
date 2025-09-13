@@ -21,13 +21,9 @@ return new class extends Migration
             
             // Foreign key ke tabel kategori_absensi
             // Tipe data di diagram adalah varchar, namun seharusnya integer
-            $table->unsignedBigInteger('id_kategori');
-            $table->foreign('id_kategori')->references('id')->on('kategori_absensi')->onDelete('cascade');
-
-            // Kolom 'datetime' menggunakan varchar sesuai diagram,
-            // namun sangat disarankan menggunakan tipe data 'datetime' atau 'timestamp'
-            $table->string('datetime', 250);
-            // Contoh jika menggunakan tipe data datetime: $table->dateTime('waktu_absen');
+            $table->unsignedBigInteger('id_sesi');
+            $table->foreign('id_sesi')->references('id')->on('sesi_absensi')->onDelete('cascade');
+            $table->datetime('waktu_absen');
 
             $table->timestamps();
         });

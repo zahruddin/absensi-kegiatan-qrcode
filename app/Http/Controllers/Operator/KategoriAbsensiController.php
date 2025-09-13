@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Operator;
 
 use App\Http\Controllers\Controller;
-use App\Models\KategoriAbsensi;
+use App\Models\SesiAbsensi;
 use Illuminate\Http\Request;
 
 class KategoriAbsensiController extends Controller
@@ -13,13 +13,36 @@ class KategoriAbsensiController extends Controller
      */
     public function store(Request $request, $id_kegiatan)
     {
+        // 1. Validasi untuk input yang terpisah
         $request->validate([
-            'nama' => 'required|string|max:255',
+            'nama'            => 'required|string|max:255',
+            'tanggal_mulai'   => 'required|date_format:Y-m-d',
+            'jam_mulai'       => 'required|date_format:H:i',
+            'tanggal_selesai' => 'required|date_format:Y-m-d',
+            'jam_selesai'     => 'required|date_format:H:i',
         ]);
 
-        KategoriAbsensi::create([
-            'id_kegiatan' => $id_kegiatan,
-            'nama' => $request->nama,
+        // 2. Gabungkan tanggal dan jam menjadi format datetime
+        $waktu_mulai = $request->tanggal_mulai . ' ' . $request->jam_mulai;
+        $waktu_selesai = $request->tanggal_selesai . ' ' . $request->jam_selesai;
+
+        // 3. Validasi tambahan setelah digabung
+        $validator = \Validator::make(['waktu_selesai' => $waktu_selesai], [
+            'waktu_selesai' => 'after:' . $waktu_mulai
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors(['tanggal_selesai' => 'Waktu selesai harus setelah waktu mulai.'])
+                ->withInput();
+        }
+        
+        // 4. Simpan ke database
+        SesiAbsensi::create([
+            'id_kegiatan'   => $id_kegiatan,
+            'nama'          => $request->nama,
+            'waktu_mulai'   => $waktu_mulai,
+            'waktu_selesai' => $waktu_selesai,
         ]);
 
         return redirect()->route('operator.kegiatan.detail', $id_kegiatan)

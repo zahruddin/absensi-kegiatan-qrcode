@@ -14,8 +14,8 @@ class Absensi extends Model
 
     protected $fillable = [
         'id_peserta',
-        'id_kategori',
-        'datetime',
+        'id_sesi',
+        'waktu_absen',
     ];
 
     /**
@@ -31,8 +31,8 @@ class Absensi extends Model
      * Relasi ke model KategoriAbsensi.
      * Satu data Absensi merujuk pada satu Kategori Absensi.
      */
-    public function kategori(): BelongsTo
+    public function sesiAbsensi(): BelongsTo
     {
-        return $this->belongsTo(KategoriAbsensi::class, 'id_kategori');
+        return $this->belongsTo(KategoriAbsensi::class, 'id_sesi');
     }
 }

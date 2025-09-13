@@ -20,12 +20,7 @@ class DashboardController extends Controller
         // Hitung data berdasarkan operator login
         $totalKegiatan = $kegiatanIds->count();
         $totalPeserta  = Peserta::whereIn('id_kegiatan', $kegiatanIds)->count();
-        $totalAbsensi  = Absensi::whereHas('kategori.kegiatan', function ($query) use ($userId) {
-            $query->where('id_user', $userId);
-        })->count();
 
-        // Peserta belum hadir
-        $belumHadir = $totalPeserta - $totalAbsensi;
 
         // Ambil 5 kegiatan terbaru milik operator login
         $kegiatanTerbaru = Kegiatan::where('id_user', $userId)
@@ -35,9 +30,6 @@ class DashboardController extends Controller
 
         return view('operator.dashboard', compact(
             'totalKegiatan',
-            // 'totalPeserta',
-            // 'totalAbsensi',
-            // 'belumHadir',
             'kegiatanTerbaru'
         ));
     }

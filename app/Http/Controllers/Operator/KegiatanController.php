@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\Kegiatan;
 use App\Models\Absensi;
-use App\Models\KategoriAbsensi;
+use App\Models\SesiAbsensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File; // Gunakan facade File untuk operasi file
 use Illuminate\Support\Facades\Auth;
@@ -116,21 +116,41 @@ class KegiatanController extends Controller
     }
 
     // KegiatanController.php
-   public function detail($id)
-    {
-        // Ambil kegiatan berdasarkan ID
-        $kegiatan = Kegiatan::findOrFail($id);
+public function detail($id)
+{
+    // 1. Ambil kegiatan dan EAGER LOAD relasi peserta untuk menghindari N+1 query
+    $kegiatan = Kegiatan::with('peserta')->findOrFail($id);
 
-        // Ambil semua kategori absensi (sesi) milik kegiatan
-        $kategoriAbsensi = KategoriAbsensi::where('id_kegiatan', $id)->get();
+    // 2. Ambil semua sesi untuk kegiatan ini
+    $sesiAbsensi = SesiAbsensi::where('id_kegiatan', $id)->get();
+    
+    // --- (Kode statistik dari sebelumnya, kita biarkan) ---
+    $sesiIds = $sesiAbsensi->pluck('id');
+    $jumlahHadir = Absensi::whereIn('id_sesi', $sesiIds)
+                            ->distinct('id_peserta')
+                            ->count('id_peserta');
+    $jumlahBelumHadir = $kegiatan->peserta->count() - $jumlahHadir; // Disesuaikan sedikit
+    // --- (Akhir kode statistik) ---
+    
+    // 3. (BARU) Siapkan data kehadiran untuk pengecekan cepat di view
+    // Ambil semua data absensi untuk kegiatan ini, lalu kelompokkan berdasarkan id_peserta
+    $kehadiranPeserta = Absensi::whereIn('id_sesi', $sesiIds)
+                                ->get()
+                                ->groupBy('id_peserta')
+                                ->map(function ($items) {
+                                    // Untuk setiap peserta, kita hanya butuh daftar ID sesi yang diikutinya
+                                    return $items->pluck('id_sesi');
+                                });
 
-        // Ambil semua absensi yang terkait dengan kategori-kategori di atas
-        $absensi = Absensi::whereIn('id_kategori', $kategoriAbsensi->pluck('id'))
-            ->with(['kategori', 'peserta']) // relasi kategori & peserta
-            ->get();
-
-        return view('operator.kegiatanDetail', compact('kegiatan', 'absensi', 'kategoriAbsensi'));
-    }
+    // 4. Kirim semua data yang sudah dioptimalkan ke view
+    return view('operator.kegiatanDetail', [
+        'kegiatan'         => $kegiatan,
+        'sesiAbsensi'      => $sesiAbsensi,
+        'jumlahHadir'      => $jumlahHadir,
+        'jumlahBelumHadir' => $jumlahBelumHadir,
+        'kehadiranPeserta' => $kehadiranPeserta, // Kirim data kehadiran yang sudah diproses
+    ]);
+}
         
 
 

@@ -22,6 +22,7 @@ class Peserta extends Model
         'nim',
         'kelompok',
         'qrcode',
+        'token',
     ];
 
     /**

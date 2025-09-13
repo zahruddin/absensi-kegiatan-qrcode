@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class KategoriAbsensiFactory extends Factory
+class SesiAbsensiFactory extends Factory
 {
     public function definition(): array
     {

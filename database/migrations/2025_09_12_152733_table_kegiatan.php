@@ -23,7 +23,8 @@ return new class extends Migration
             
             // Kolom 'date' menggunakan varchar sesuai diagram,
             // namun sangat disarankan menggunakan tipe data 'date' atau 'datetime'
-            $table->string('date', 250); 
+            $table->datetime('date');
+            $table->enum('status', ['aktif', 'tidak aktif'])->default('aktif');
             // Contoh jika menggunakan tipe data date: $table->date('date');
 
             $table->timestamps();
