@@ -5,10 +5,15 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Peserta;
+use App\Models\Kegiatan;
 use Illuminate\Support\Str;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel; 
+use App\Imports\PesertaImport; 
+use App\Exports\PesertaExport;       
+use App\Exports\PesertaLinkQrExport;
 
 
 class PesertaController extends Controller
@@ -18,36 +23,37 @@ class PesertaController extends Controller
      */
     public function store(Request $request)
     {
+        // 1. Validasi input dari form
         $request->validate([
             'id_kegiatan' => 'required|exists:kegiatan,id',
             'nama'        => 'required|string|max:255',
             'email'       => 'nullable|email',
             'no_hp'       => 'nullable|string|max:20',
             'prodi'       => 'nullable|string|max:100',
-            'nim'         => 'nullable|string|max:50',
+            'nim'         => 'nullable|string|max:50', // NIM boleh kosong
             'kelompok'    => 'nullable|string|max:50',
         ]);
 
-        // 1. Generate token unik yang akan menjadi isi QR Code
-        // Str::random() menghasilkan string acak yang lebih sulit ditebak daripada UUID
+        // 2. Generate token unik yang akan menjadi isi QR Code
         $uniqueToken = Str::random(40);
 
-        // Nama file QR Code agar unik
-        $fileName = 'qrcode_' . $request->nim . '_' . time() . '.png';
+        // ✅ DIUBAH: Nama file menggunakan nama peserta + timestamp agar unik dan informatif
+        $safeName = Str::slug($request->nama); // Mengubah "Nama Peserta Keren" -> "nama-peserta-keren"
+        $fileName = 'qrcode_' . $safeName . '_' . time() . '.png';
 
         // Path penyimpanan di dalam folder public/storage
         $filePath = 'qrcode_peserta/' . $fileName;
 
-        // Generate gambar QR Code dengan konten dari $uniqueToken
+        // 3. Generate gambar QR Code dengan konten dari token
         $qrCodeImage = QrCode::format('png')
             ->size(300)
             ->margin(2)
-            ->generate($uniqueToken); // <-- Gunakan token sebagai isi QR Code
+            ->generate($uniqueToken);
 
         // Simpan file gambar QR Code ke disk 'public'
         Storage::disk('public')->put($filePath, $qrCodeImage);
 
-        // 2. Simpan data peserta ke database
+        // 4. Simpan data lengkap peserta ke database
         Peserta::create([
             'id_kegiatan' => $request->id_kegiatan,
             'nama'        => $request->nama,
@@ -100,8 +106,45 @@ class PesertaController extends Controller
 
         return redirect()->back()->with('success', 'Peserta berhasil dihapus.');
     }
+    public function import(Request $request)
+    {
+        // 3. Validasi request dari form modal
+        $request->validate([
+            'id_kegiatan' => 'required|exists:kegiatan,id',
+            'file'        => 'required|mimes:xlsx,xls', // Pastikan file adalah Excel
+        ]);
 
+        try {
+            // 4. Panggil class import, kirim id_kegiatan & file
+            Excel::import(new PesertaImport($request->id_kegiatan), $request->file('file'));
+            
+            // 5. Jika sukses, redirect kembali dengan pesan
+            return redirect()->back()->with('success', 'Data peserta berhasil diimpor!');
 
+        } catch (\Exception $e) {
+            // 6. Jika terjadi error, tangkap dan kembalikan dengan pesan error
+            return redirect()->back()->with('error', 'Gagal mengimpor data. Pastikan format file Excel sudah benar. Error: ' . $e->getMessage());
+        }
+    }
+    
+    public function export(Kegiatan $kegiatan)
+    {
+        // 4. Buat nama file yang dinamis dan mudah dikenali
+        // Contoh: 'peserta-seminar-nasional-2025.xlsx'
+        $fileName = 'peserta-' . Str::slug($kegiatan->nama) . '.xlsx';
+        
+        // 5. Panggil library Excel untuk men-download file
+        // Kita membuat instance baru dari PesertaExport dan mengirimkan objek $kegiatan
+        return Excel::download(new PesertaExport($kegiatan), $fileName);
+    }
+    public function exportLinkQr(Kegiatan $kegiatan)
+    {
+        // 2. Buat nama file yang dinamis
+        $fileName = 'link-qrcode-peserta-' . Str::slug($kegiatan->nama) . '.xlsx';
+        
+        // 3. Panggil library Excel untuk men-download file
+        return Excel::download(new PesertaLinkQrExport($kegiatan), $fileName);
+    }
     public function downloadQRCode($id)
     {
         $peserta = Peserta::findOrFail($id);

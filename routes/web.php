@@ -82,7 +82,8 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
         Route::post('/store', [Operator\PesertaController::class, 'store'])->name('store');
         Route::put('/update/{id}', [Operator\PesertaController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [Operator\PesertaController::class, 'delete'])->name('delete');
-        Route::get('/export/{id}', [Operator\PesertaController::class, 'export'])->name('export');
+        Route::get('/export/{kegiatan}', [Operator\PesertaController::class, 'export'])->name('export');
+        Route::get('/export/link-qr/{kegiatan}', [Operator\PesertaController::class, 'exportLinkQr'])->name('export.linkqr');
         Route::post('/import', [Operator\PesertaController::class, 'import'])->name('import');
         Route::get('/download-qrcode/{id}', [Operator\PesertaController::class, 'downloadQRCode'])->name('download_qrcode');
     });

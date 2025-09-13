@@ -127,6 +127,9 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Data Peserta</h5>
                 <div>
+                    <a href="{{ route('operator.peserta.export.linkqr', $kegiatan->id) }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Export link qrcode
+                    </a>
                     <a href="{{ route('operator.peserta.export', $kegiatan->id) }}" class="btn btn-success btn-sm">
                         <i class="bi bi-file-earmark-excel"></i> Export Excel
                     </a>
