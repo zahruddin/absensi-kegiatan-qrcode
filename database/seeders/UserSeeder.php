@@ -3,38 +3,33 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Membuat user dengan role admin
+        // 1. Membuat 1 user Admin
         User::create([
-            'name' => 'Admin User',
-            'username' => 'admin123',
-            'email' => 'admin@example.com',
-            'password' => Hash::make('password123'),
+            'name' => 'Admin Utama',
+            'username' => 'admin',
+            'email' => 'admin@contoh.com',
+            'password' => Hash::make('admin123'),
             'role' => 'admin',
+            'email_verified_at' => now(),
         ]);
 
-        // Membuat user dengan role kasir
-        User::create([
-            'name' => 'Kasir User',
-            'username' => 'kasir123',
-            'email' => 'kasir@example.com',
-            'password' => Hash::make('password123'),
-            'role' => 'kasir',
+        // 2. Membuat 5 user Operator menggunakan factory
+        User::factory(5)->create([
+            'role' => 'operator',
         ]);
 
-        // Membuat user dengan role customer
-        User::create([
-            'name' => 'Customer User',
-            'username' => 'customer123',
-            'email' => 'customer@example.com',
-            'password' => Hash::make('password123'),
-            'role' => 'customer',
-        ]);
+        // 3. Membuat 10 user Peserta menggunakan factory
+        // Sebenarnya user peserta lebih baik dibuat bersamaan dengan data peserta di kegiatan,
+        // namun untuk contoh, kita buat di sini.
+        // User::factory(10)->create([
+        //     'role' => 'peserta',
+        // ]);
     }
 }

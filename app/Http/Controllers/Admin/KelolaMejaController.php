@@ -59,8 +59,7 @@ class KelolaMejaController extends Controller
 
         return redirect()->back()->with('success', 'Meja dan QR Code berhasil dibuat!');
     }
-
-
+    
     public function update(Request $request, $id)
     {
         $request->validate([

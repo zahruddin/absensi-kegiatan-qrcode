@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
@@ -42,20 +43,15 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
     ];
 
     /**
-     * Fungsi untuk menemukan user berdasarkan username atau email
-     * untuk keperluan login (misalnya menggunakan Passport).
-     *
-     * @param string $username
-     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|null
+     * Mendefinisikan relasi ke model Kegiatan.
+     * Satu User (admin/operator) bisa memiliki banyak Kegiatan.
      */
-    public function findForPassport($username)
+    public function kegiatan(): HasMany
     {
-        return $this->where('email', $username)
-                    ->orWhere('username', $username)
-                    ->first();
+        return $this->hasMany(Kegiatan::class, 'id_user');
     }
-
 }

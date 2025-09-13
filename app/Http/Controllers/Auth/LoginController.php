@@ -21,11 +21,11 @@ class LoginController extends Controller
                 return redirect()->route('admin.dashboard');
             }
             // Jika role adalah kasir, arahkan ke dashboard kasir
-            if ($role === 'kasir') {
-                return redirect()->route('kasir.dashboard');
+            if ($role === 'operator') {
+                return redirect()->route('operator.dashboard');
             }
-            if ($role === 'customer') {
-                return redirect()->route('customer.menu');
+            if ($role === 'peserta') {
+                return redirect()->route('perserta.dashboard');
             }
             // Jika role tidak sesuai, bisa arahkan ke halaman utama atau halaman lain
             return redirect('/');
@@ -57,10 +57,10 @@ class LoginController extends Controller
             switch ($user->role) {
                 case 'admin':
                     return redirect()->route('admin.dashboard');
-                case 'kasir':
-                    return redirect()->route('kasir.sales');
-                case 'customer':
-                    return redirect()->route('customer.menu');
+                case 'operator':
+                    return redirect()->route('operator.dashboard');
+                case 'peserta':
+                    return redirect()->route('peserta.dashboard');
                 default:
                     return redirect()->route('login')->withErrors(['message' => 'Role tidak dikenali.']);
             }
