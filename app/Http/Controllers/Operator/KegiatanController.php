@@ -122,7 +122,9 @@ public function detail($id)
     $kegiatan = Kegiatan::with('peserta')->findOrFail($id);
 
     // 2. Ambil semua sesi untuk kegiatan ini
-    $sesiAbsensi = SesiAbsensi::where('id_kegiatan', $id)->get();
+    $sesiAbsensi = SesiAbsensi::where('id_kegiatan', $id)
+                          ->withCount('absensi') // <-- TAMBAHKAN BARIS INI
+                          ->get();
     
     // --- (Kode statistik dari sebelumnya, kita biarkan) ---
     $sesiIds = $sesiAbsensi->pluck('id');

@@ -19,6 +19,17 @@ class Absensi extends Model
     ];
 
     /**
+     * ✅ TAMBAHKAN PROPERTI INI
+     * Memberitahu Laravel untuk mengubah kolom 'waktu_absen'
+     * menjadi objek Carbon secara otomatis.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'waktu_absen' => 'datetime',
+    ];
+
+    /**
      * Relasi ke model Peserta.
      * Satu data Absensi dimiliki oleh satu Peserta.
      */
@@ -31,8 +42,8 @@ class Absensi extends Model
      * Relasi ke model KategoriAbsensi.
      * Satu data Absensi merujuk pada satu Kategori Absensi.
      */
-    public function sesiAbsensi(): BelongsTo
+    public function sesi(): BelongsTo
     {
-        return $this->belongsTo(KategoriAbsensi::class, 'id_sesi');
+        return $this->belongsTo(SesiAbsensi::class, 'id_sesi');
     }
 }

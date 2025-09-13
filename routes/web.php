@@ -91,16 +91,18 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
 
     // ====== ABSENSI / SCAN ======
     Route::prefix('operator/absensi')->name('operator.absensi.')->group(function () {
+        Route::get('/export/{kegiatan}/{id_sesi}', [Operator\AbsensiController::class, 'exportAbsensi']) ->name('export'); // <-- Lebih sederhana
         // Menampilkan daftar peserta yang sudah absen di sebuah sesi
         Route::get('/show/{sesi_absensi}', [Operator\AbsensiController::class, 'show'])->name('show');
         // Ganti route 'scan' lama Anda dengan ini
         Route::get('/scan/{sesi_absensi}', [Operator\AbsensiController::class, 'scan'])->name('scan');
 
+
+        Route::get('', [Operator\AbsensiController::class, 'export'])->name('export.absensi');
         // Tambahkan route baru ini untuk memproses data dari scanner
         Route::post('/scan/process', [Operator\AbsensiController::class, 'processScan'])->name('scan.process');
         // ✅ Menyimpan absensi manual (tanpa parameter di URL)
         Route::post('/manual', [Operator\AbsensiController::class, 'storeManual'])->name('manual');
-
         // ✅ Membatalkan absensi manual (menggunakan method DELETE yang lebih tepat)
         Route::delete('/cancel', [Operator\AbsensiController::class, 'cancelManual'])->name('cancel');
     });

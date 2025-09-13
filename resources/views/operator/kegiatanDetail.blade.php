@@ -58,9 +58,14 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Sesi Absensi</h5>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahSesiModal">
-                    <i class="bi bi-plus-circle"></i> Tambah Sesi
-                </button>
+                <div>
+                    <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exportAbsensiModal">
+                        <i class="bi bi-file-earmark-excel"></i> Export Absensi
+                    </button>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahSesiModal">
+                        <i class="bi bi-plus-circle"></i> Tambah Sesi
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <table id="sesiTable" class="table table-bordered table-striped">
@@ -93,7 +98,7 @@
                                     </a>
                                     
                                     {{-- Tombol Scan QR --}}
-                                    <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm">
+                                    <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm" target="_blank">
                                         <i class="bi bi-qr-code-scan"></i> Scan QR
                                     </a>
                                     
@@ -147,6 +152,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Peserta</th>
+                            <th>Kelompok</th>
                             {{-- Tampilkan nama sesi sebagai header kolom status --}}
                             @foreach ($sesiAbsensi as $sesi)
                                 <th class="text-center">{{ $sesi->nama }}</th>
@@ -161,6 +167,7 @@
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $peserta->nama }}</td>
+                                <td>{{ $peserta->kelompok }}</td>
                                 
                                 {{-- Cek kehadiran untuk setiap sesi dengan lookup cepat --}}
                                 @foreach($sesiAbsensi as $sesi)
@@ -172,7 +179,6 @@
                                         @endif
                                     </td>
                                 @endforeach
-
                                 <td>
                                     @if($peserta->qrcode)
                                         <img src="{{ asset('storage/'.$peserta->qrcode) }}" alt="QR Code {{ $peserta->nama }}" width="50">
@@ -350,6 +356,39 @@
     </div>
 </div>
 
+<!-- Modal Export Absensi -->
+<div class="modal fade" id="exportAbsensiModal" tabindex="-1" aria-labelledby="exportAbsensiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportAbsensiLabel">Export Data Absensi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+            </div>
+            <div class="modal-body">
+                <p>Pilih sesi absensi yang ingin Anda ekspor.</p>
+                <div class="mb-3">
+                    <label for="sesi_pilihan_export" class="form-label">Sesi Absensi</label>
+                    <select id="sesi_pilihan_export" class="form-select">
+                        {{-- Opsi untuk mengekspor semua sesi --}}
+                        <option value="all">-- Semua Sesi --</option>
+                        
+                        {{-- Loop untuk setiap sesi yang tersedia --}}
+                        @foreach ($sesiAbsensi as $sesi)
+                            <option value="{{ $sesi->id }}">{{ $sesi->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                {{-- Tombol ini akan kita kontrol dengan JavaScript --}}
+                <button type="button" class="btn btn-success" id="btn-do-export">
+                    <i class="bi bi-download"></i> Export Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -633,6 +672,34 @@
             });
         });
     });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const exportButton = document.getElementById('btn-do-export');
+    
+    if (exportButton) {
+        exportButton.addEventListener('click', function() {
+            const selectElement = document.getElementById('sesi_pilihan_export');
+            const selectedSesiId = selectElement.value;
+
+            if (!selectedSesiId) {
+                alert('Silakan pilih sesi terlebih dahulu.');
+                return;
+            }
+
+            // Buat URL dasar dari route, gunakan placeholder
+            // JavaScript disesuaikan dengan nama route baru
+            let baseUrl = "{{ route('operator.absensi.export', [$kegiatan->id, 'PLACEHOLDER']) }}";
+            
+            // Ganti placeholder dengan ID sesi yang dipilih (bisa "all" atau angka)
+            let finalUrl = baseUrl.replace('PLACEHOLDER', selectedSesiId);
+            
+            // Arahkan browser untuk men-download dari URL yang sudah jadi
+            window.location.href = finalUrl;
+        });
+    }
+});
 </script>
 
 <script>
