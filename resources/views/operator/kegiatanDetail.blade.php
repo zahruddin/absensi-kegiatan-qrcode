@@ -4,9 +4,7 @@
 @section('title', $kegiatan->nama . ' | Operator')
 @section('page', $kegiatan->nama)
 
-@section('content')
-
-@push('style')
+@section('style')
 <style>
     .pulsing-badge {
         animation: pulse 1.5s infinite;
@@ -17,8 +15,9 @@
         100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
     }
 </style>
-@endpush
+@endsection
 
+@section('content')
 <div class="app-content">
     <div class="container-fluid">
 
