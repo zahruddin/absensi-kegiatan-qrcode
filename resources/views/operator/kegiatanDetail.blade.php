@@ -5,6 +5,7 @@
 @section('page', $kegiatan->nama)
 
 @section('content')
+
 <div class="app-content">
     <div class="container-fluid">
 
@@ -87,6 +88,7 @@
 
 
         {{-- ====== DAFTAR SESI ABSENSI ====== --}}
+        {{-- ====== DAFTAR SESI ABSENSI ====== --}}
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Sesi Absensi</h5>
@@ -105,49 +107,76 @@
                         <tr>
                             <th>No</th>
                             <th>Nama Sesi</th>
+                            {{-- ✅ DITAMBAHKAN: Kolom Status --}}
+                            <th>Status</th>
                             <th>Waktu Mulai</th>
+                            {{-- ✅ DITAMBAHKAN: Header untuk Waktu Selesai --}}
                             <th>Waktu Selesai</th>
                             <th>Jumlah Hadir</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- Loop menggunakan variabel baru: $sesiAbsensi as $sesi --}}
                         @foreach ($sesiAbsensi as $index => $sesi)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $sesi->nama }}</td>
                                 
-                                {{-- Menampilkan waktu_mulai dan memformatnya. Pastikan kolom ini ada. --}}
-                                <td>{{ $sesi->waktu_mulai->format('d M Y, H:i') }}</td>
-                                <td>{{ $sesi->waktu_selesai->format('d M Y, H:i') }}</td>
+                                {{-- ✅ DITAMBAHKAN: Logika untuk menampilkan status sesi secara dinamis --}}
+                                <td>
+                                    @if ($sesi->waktu_mulai && $sesi->waktu_selesai)
+                                        @if(now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
+                                            <span class="badge bg-success pulsing-badge">Sedang Berlangsung</span>
+                                        @elseif(now()->isBefore($sesi->waktu_mulai))
+                                            <span class="badge bg-secondary">Akan Datang</span>
+                                        @else
+                                            <span class="badge bg-dark">Selesai</span>
+                                        @endif
+                                    @else
+                                        <span class="badge bg-warning">Jadwal Belum Diatur</span>
+                                    @endif
+                                </td>
+
+                                <td>
+                                    @if($sesi->waktu_mulai)
+                                        {{ $sesi->waktu_mulai->format('d M Y, H:i') }}
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($sesi->waktu_selesai)
+                                        {{ $sesi->waktu_selesai->format('d M Y, H:i') }}
+                                    @else
+                                        <span class="text-muted">-</span>
+                                    @endif
+                                </td>
                                 
-                                {{-- Menampilkan jumlah hadir dari hasil withCount --}}
                                 <td>{{ $sesi->absensi_count }}</td>
                                 
                                 <td>
-                                    {{-- Tombol Lihat Peserta --}}
                                     <a href="{{ route('operator.absensi.show', $sesi->id) }}" class="btn btn-info btn-sm">
-                                        <i class="bi bi-eye"></i> Lihat Peserta
+                                        <i class="bi bi-eye"></i>
                                     </a>
                                     
-                                    {{-- Tombol Scan QR --}}
-                                    <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm" target="_blank">
-                                        <i class="bi bi-qr-code-scan"></i> Scan QR
-                                    </a>
+                                    {{-- ✅ DITAMBAHKAN: Tombol Scan QR hanya muncul jika sesi sedang berlangsung --}}
+                                    @if ($sesi->waktu_mulai && $sesi->waktu_selesai && now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
+                                        <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm" target="_blank" title="Scan QR">
+                                            <i class="bi bi-qr-code-scan"></i>
+                                        </a>
+                                    @endif
                                     
-                                    {{-- Tombol Edit Sesi --}}
-                                    <button class="btn btn-secondary btn-sm btn-edit-sesi"
+                                    <button class="btn btn-warning btn-sm btn-edit-sesi"
                                             data-bs-toggle="modal"
                                             data-bs-target="#editSesiModal"
                                             data-id="{{ $sesi->id }}"
                                             data-nama="{{ $sesi->nama }}"
-                                            data-waktu_mulai="{{ $sesi->waktu_mulai->format('Y-m-d H:i') }}"
-                                            data-waktu_selesai="{{ $sesi->waktu_selesai->format('Y-m-d H:i') }}">
+                                            {{-- ✅ DIPERBAIKI: Mencegah error jika waktu null --}}
+                                            data-waktu_mulai="{{ $sesi->waktu_mulai ? $sesi->waktu_mulai->format('Y-m-d H:i') : '' }}"
+                                            data-waktu_selesai="{{ $sesi->waktu_selesai ? $sesi->waktu_selesai->format('Y-m-d H:i') : '' }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
-                                    {{-- Tombol Hapus Sesi --}}
                                     <button class="btn btn-danger btn-sm btn-hapus-sesi"
                                             data-bs-toggle="modal"
                                             data-bs-target="#hapusSesiModal"
@@ -162,6 +191,8 @@
                 </table>
             </div>
         </div>
+
+        {{-- Untuk membuat efek kedip pada badge "Sedang Berlangsung" --}}
 
         {{-- ====== DATA PESERTA ====== --}}
         <div class="card">
