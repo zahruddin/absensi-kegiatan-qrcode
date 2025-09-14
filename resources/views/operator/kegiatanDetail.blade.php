@@ -6,7 +6,7 @@
 
 @section('content')
 
-@push('styles')
+@push('style')
 <style>
     .pulsing-badge {
         animation: pulse 1.5s infinite;
