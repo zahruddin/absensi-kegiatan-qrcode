@@ -6,6 +6,19 @@
 
 @section('content')
 
+@push('styles')
+<style>
+    .pulsing-badge {
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(25, 135, 84, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(25, 135, 84, 0); }
+    }
+</style>
+@endpush
+
 <div class="app-content">
     <div class="container-fluid">
 
