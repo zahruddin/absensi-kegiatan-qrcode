@@ -34,7 +34,7 @@
                     <div class="card-body d-flex flex-column justify-content-center">
                         @if ($sesiAktif)
                             <h5 class="card-title text-success">
-                                <i class="bi bi-broadcast"></i> Sesi Aktif Saat Ini
+                                <i class="bi bi-broadcast"></i> Sesi Aktif Saat Ini banget
                             </h5>
                             {{-- Menampilkan jumlah hadir di sesi yang sedang berjalan --}}
                             <h2>{{ $sesiAktif->absensi_count }} <small class="fs-5 text-muted">/ {{ $kegiatan->peserta_count }}</small></h2>
