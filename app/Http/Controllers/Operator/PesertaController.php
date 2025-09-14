@@ -30,16 +30,17 @@ class PesertaController extends Controller
             'email'       => 'nullable|email',
             'no_hp'       => 'nullable|string|max:20',
             'prodi'       => 'nullable|string|max:100',
-            'nim'         => 'nullable|string|max:50', // NIM boleh kosong
+            'nim'         => 'nullable|string|max:50',
             'kelompok'    => 'nullable|string|max:50',
         ]);
 
         // 2. Generate token unik yang akan menjadi isi QR Code
         $uniqueToken = Str::random(40);
 
-        // ✅ DIUBAH: Nama file menggunakan nama peserta + timestamp agar unik dan informatif
-        $safeName = Str::slug($request->nama); // Mengubah "Nama Peserta Keren" -> "nama-peserta-keren"
-        $fileName = 'qrcode_' . $safeName . '_' . time() . '.png';
+        // ✅ DIUBAH: Nama file sekarang konsisten, menggunakan bagian dari token
+        $safeName = Str::slug($request->nama);             // Mengubah "Budi Santoso" -> "budi-santoso"
+        $uniquePart = substr($uniqueToken, 0, 8);          // Ambil 8 karakter pertama dari token baru
+        $fileName = 'qrcode_' . $safeName . '_' . $uniquePart . '.png';
 
         // Path penyimpanan di dalam folder public/storage
         $filePath = 'qrcode_peserta/' . $fileName;
@@ -62,8 +63,8 @@ class PesertaController extends Controller
             'prodi'       => $request->prodi,
             'nim'         => $request->nim,
             'kelompok'    => $request->kelompok,
-            'qrcode'      => $filePath,      // Simpan path file QR Code
-            'token'       => $uniqueToken,   // Simpan token uniknya
+            'qrcode'      => $filePath,
+            'token'       => $uniqueToken,
         ]);
 
         return redirect()->back()->with('success', 'Peserta berhasil ditambahkan dengan QR Code.');

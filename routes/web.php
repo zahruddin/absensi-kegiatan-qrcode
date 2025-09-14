@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Operator;
 use App\Http\Controllers\Peserta;
+use App\Http\Controllers\Operator\SesiAbsensiController; 
 
 
 /*
@@ -68,10 +69,10 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
     });
 
     // ====== SESI absensi / ======
-    Route::prefix('operator/kegiatan/{id_kegiatan}/sesi')->name('operator.kegiatan.sesi.')->group(function () {
-        Route::post('/store', [Operator\KategoriAbsensiController::class, 'store'])->name('store');
-        Route::put('/update/{id}', [Operator\KategoriAbsensiController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [Operator\KategoriAbsensiController::class, 'delete'])->name('delete');
+    Route::prefix('operator/kegiatan/{kegiatan}/sesi')->name('operator.kegiatan.sesi.')->group(function () {
+        Route::post('/store', [SesiAbsensiController::class, 'store'])->name('store');
+        Route::put('/update/{sesi_absensi}', [SesiAbsensiController::class, 'update'])->name('update');
+        Route::post('/destroy/{sesi_absensi}', [SesiAbsensiController::class, 'destroy'])->name('destroy');
     });
 
 

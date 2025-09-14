@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         ]);
 
         // 2. Membuat 5 user Operator menggunakan factory
-        User::factory(5)->create([
+        User::factory(1)->create([
             'role' => 'operator',
             'password' => Hash::make('admin123'),
 

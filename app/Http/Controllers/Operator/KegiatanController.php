@@ -118,41 +118,49 @@ class KegiatanController extends Controller
     // KegiatanController.php
 public function detail($id)
 {
-    // 1. Ambil kegiatan dan EAGER LOAD relasi peserta untuk menghindari N+1 query
-    $kegiatan = Kegiatan::with('peserta')->findOrFail($id);
-
-    // 2. Ambil semua sesi untuk kegiatan ini
+    // 1. Ambil data utama dengan relasi dan hitungan yang dibutuhkan
+    $kegiatan = Kegiatan::withCount('peserta')->findOrFail($id);
     $sesiAbsensi = SesiAbsensi::where('id_kegiatan', $id)
-                          ->withCount('absensi') // <-- TAMBAHKAN BARIS INI
-                          ->get();
-    
-    // --- (Kode statistik dari sebelumnya, kita biarkan) ---
-    $sesiIds = $sesiAbsensi->pluck('id');
-    $jumlahHadir = Absensi::whereIn('id_sesi', $sesiIds)
-                            ->distinct('id_peserta')
-                            ->count('id_peserta');
-    $jumlahBelumHadir = $kegiatan->peserta->count() - $jumlahHadir; // Disesuaikan sedikit
-    // --- (Akhir kode statistik) ---
-    
-    // 3. (BARU) Siapkan data kehadiran untuk pengecekan cepat di view
-    // Ambil semua data absensi untuk kegiatan ini, lalu kelompokkan berdasarkan id_peserta
-    $kehadiranPeserta = Absensi::whereIn('id_sesi', $sesiIds)
-                                ->get()
-                                ->groupBy('id_peserta')
-                                ->map(function ($items) {
-                                    // Untuk setiap peserta, kita hanya butuh daftar ID sesi yang diikutinya
-                                    return $items->pluck('id_sesi');
-                                });
+                              ->withCount('absensi')
+                              ->orderBy('waktu_mulai', 'asc')
+                              ->get();
 
-    // 4. Kirim semua data yang sudah dioptimalkan ke view
+    // 2. Siapkan variabel dasar untuk statistik
+    $totalPeserta = $kegiatan->peserta_count;
+    $totalSesi = $sesiAbsensi->count();
+    $sesiIds = $sesiAbsensi->pluck('id');
+
+    // 3. Hitung Statistik Partisipasi (Berapa persen peserta yang datang min. 1x)
+    $jumlahHadirUnik = Absensi::whereIn('id_sesi', $sesiIds)->distinct('id_peserta')->count();
+    $tingkatPartisipasi = ($totalPeserta > 0) ? round(($jumlahHadirUnik / $totalPeserta) * 100) : 0;
+
+    // 4. Hitung Statistik Kehadiran Total (Berapa persen total absensi yang terisi)
+    $maksimalAbsensi = $totalPeserta * $totalSesi;
+    $totalAbsensiTercatat = Absensi::whereIn('id_sesi', $sesiIds)->count();
+    $tingkatKehadiranTotal = ($maksimalAbsensi > 0) ? round(($totalAbsensiTercatat / $maksimalAbsensi) * 100) : 0;
+    
+    // 5. Cari sesi yang sedang aktif dan hitung sesi yang sudah selesai
+    $sesiAktif = $sesiAbsensi->first(fn($sesi) => now()->between($sesi->waktu_mulai, $sesi->waktu_selesai));
+    $sesiSelesai = $sesiAbsensi->where('waktu_selesai', '<', now())->count();
+    
+    // 6. Siapkan data untuk tabel kehadiran (tidak berubah)
+    $kehadiranPeserta = Absensi::whereIn('id_sesi', $sesiIds)
+                               ->get()
+                               ->groupBy('id_peserta')
+                               ->map(fn($items) => $items->pluck('id_sesi'));
+
+    // 7. Kirim semua data yang sudah dihitung ke view
     return view('operator.kegiatanDetail', [
-        'kegiatan'         => $kegiatan,
-        'sesiAbsensi'      => $sesiAbsensi,
-        'jumlahHadir'      => $jumlahHadir,
-        'jumlahBelumHadir' => $jumlahBelumHadir,
-        'kehadiranPeserta' => $kehadiranPeserta, // Kirim data kehadiran yang sudah diproses
+        'kegiatan' => $kegiatan,
+        'sesiAbsensi' => $sesiAbsensi,
+        'kehadiranPeserta' => $kehadiranPeserta,
+        'sesiAktif' => $sesiAktif,
+        'sesiSelesai' => $sesiSelesai,
+        'tingkatPartisipasi' => $tingkatPartisipasi,
+        'tingkatKehadiranTotal' => $tingkatKehadiranTotal,
     ]);
 }
+
         
 
 

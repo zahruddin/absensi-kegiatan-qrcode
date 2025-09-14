@@ -39,12 +39,8 @@ class Kegiatan extends Model
         return $this->hasMany(Peserta::class, 'id_kegiatan');
     }
 
-    /**
-     * Relasi ke model KategoriAbsensi.
-     * Satu Kegiatan memiliki banyak Kategori Absensi.
-     */
-    public function kategoriAbsensi(): HasMany
+    public function sesiAbsensi(): HasMany
     {
-        return $this->hasMany(KategoriAbsensi::class, 'id_kegiatan');
+        return $this->hasMany(SesiAbsensi::class, 'id_kegiatan');
     }
 }

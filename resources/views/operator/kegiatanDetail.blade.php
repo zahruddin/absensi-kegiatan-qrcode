@@ -11,48 +11,80 @@
         {{-- ALERT UNTUK NOTIFIKASI --}}
         @include('components.alert')
 
-        {{-- ====== STATISTIK KEHADIRAN ====== --}}
+        {{-- ====== STATISTIK KEHADIRAN (VERSI BARU YANG LEBIH RELEVAN) ====== --}}
         <div class="row mb-4">
-            {{-- Jumlah Peserta --}}
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Jumlah Peserta</h5>
+            
+            {{-- 1. Kehadiran Sesi Aktif --}}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        @if ($sesiAktif)
+                            <h5 class="card-title text-success">
+                                <i class="bi bi-broadcast"></i> Sesi Aktif Saat Ini
+                            </h5>
+                            {{-- Menampilkan jumlah hadir di sesi yang sedang berjalan --}}
+                            <h2>{{ $sesiAktif->absensi_count }} <small class="fs-5 text-muted">/ {{ $kegiatan->peserta_count }}</small></h2>
+                            <p class="mb-0 text-muted small">{{ $sesiAktif->nama }}</p>
+                        @else
+                            <h5 class="card-title">Sesi Aktif</h5>
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <h4 class="text-muted my-2">Tidak Ada</h4>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+            {{-- 2. Tingkat Partisipasi Peserta --}}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title">Tingkat Partisipasi</h5>
+                        <h2>{{ $tingkatPartisipasi }}<small class="fs-4">%</small></h2>
+                        <p class="text-muted mb-0 small">Peserta yang hadir min. 1x</p>
+                    </div>
+                </div>
+            </div>
+
+            {{-- 3. Tingkat Kehadiran Total per Sesi --}}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title">Kehadiran / Sesi</h5>
+                        <h2>{{ $tingkatKehadiranTotal }}<small class="fs-4">%</small></h2>
+                        <div class="progress mt-1" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar" style="width: {{ $tingkatKehadiranTotal }}%;" ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {{-- 4. Total Peserta Terdaftar --}}
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title">Total Peserta</h5>
                         <h2>{{ $kegiatan->peserta_count }}</h2>
+                        <p class="text-muted mb-0 small">Terdaftar</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Sudah Hadir --}}
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Sudah Hadir</h5>
-                        <h2 class="text-success">{{ $jumlahHadir }}</h2>
+            {{-- 5. Progres Sesi Berjalan --}}
+            <div class="col-lg-6 col-md-6 mb-4">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body d-flex flex-column justify-content-center">
+                        <h5 class="card-title">Progres Sesi</h5>
+                        <h2>{{ $sesiSelesai }} <small class="fs-5 text-muted">/ {{ $sesiAbsensi->count() }}</small></h2>
+                        <p class="text-muted mb-0 small">Sesi Selesai</p>
                     </div>
                 </div>
             </div>
 
-            {{-- Belum Hadir --}}
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Belum Hadir</h5>
-                        <h2 class="text-danger">{{ $jumlahBelumHadir }}</h2>
-                    </div>
-                </div>
-            </div>
-
-            {{-- Total Sesi Absensi --}}
-            <div class="col-md-3">
-                <div class="card text-center shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Sesi Absensi</h5>
-                        <h2>{{ $sesiAbsensi->count() }}</h2>
-                    </div>
-                </div>
-            </div>
         </div>
+
+
+
 
         {{-- ====== DAFTAR SESI ABSENSI ====== --}}
         <div class="card mb-4">
@@ -74,6 +106,7 @@
                             <th>No</th>
                             <th>Nama Sesi</th>
                             <th>Waktu Mulai</th>
+                            <th>Waktu Selesai</th>
                             <th>Jumlah Hadir</th>
                             <th>Aksi</th>
                         </tr>
@@ -87,6 +120,7 @@
                                 
                                 {{-- Menampilkan waktu_mulai dan memformatnya. Pastikan kolom ini ada. --}}
                                 <td>{{ $sesi->waktu_mulai->format('d M Y, H:i') }}</td>
+                                <td>{{ $sesi->waktu_selesai->format('d M Y, H:i') }}</td>
                                 
                                 {{-- Menampilkan jumlah hadir dari hasil withCount --}}
                                 <td>{{ $sesi->absensi_count }}</td>
@@ -107,7 +141,9 @@
                                             data-bs-toggle="modal"
                                             data-bs-target="#editSesiModal"
                                             data-id="{{ $sesi->id }}"
-                                            data-nama="{{ $sesi->nama }}">
+                                            data-nama="{{ $sesi->nama }}"
+                                            data-waktu_mulai="{{ $sesi->waktu_mulai->format('Y-m-d H:i') }}"
+                                            data-waktu_selesai="{{ $sesi->waktu_selesai->format('Y-m-d H:i') }}">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
 
@@ -234,13 +270,15 @@
 </div>
 
 
-
+{{-- MODAL CARD SESI KEGIATAN --}}
 <!-- Modal Tambah Sesi -->
 <div class="modal fade" id="tambahSesiModal" tabindex="-1" aria-labelledby="tambahSesiModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form action="{{ route('operator.kegiatan.sesi.store', $kegiatan->id) }}" method="POST">
                 @csrf
+                {{-- ✅ Tambahkan penanda ini --}}
+                <input type="hidden" name="form_type" value="add_sesi">
                 <div class="modal-header">
                     <h5 class="modal-title" id="tambahSesiModalLabel">Tambah Sesi Absensi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
@@ -298,17 +336,8 @@
         </div>
     </div>
 </div>
-
-@if ($errors->any())
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var myModal = new bootstrap.Modal(document.getElementById('tambahSesiModal'));
-        myModal.show();
-    });
-</script>
-@endif
-
-
+{{-- edit sesi --}}
+<!-- Modal Edit Sesi -->
 <div class="modal fade" id="editSesiModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form id="formEditSesi" method="POST">
@@ -320,9 +349,52 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
+                    
+                    {{-- Input Nama Sesi --}}
                     <div class="mb-3">
-                        <label for="namaSesi" class="form-label">Nama Sesi</label>
-                        <input type="text" class="form-control" id="namaSesi" name="nama" required>
+                        <label for="edit_nama_sesi" class="form-label">Nama Sesi</label>
+                        {{-- ✅ DITAMBAHKAN: class @error dan value old() --}}
+                        <input type="text" class="form-control @error('nama') is-invalid @enderror" id="edit_nama_sesi" name="nama" value="{{ old('nama') }}" required>
+                        {{-- ✅ DITAMBAHKAN: Blok untuk menampilkan pesan error --}}
+                        @error('nama')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    {{-- Waktu Mulai (Dipisah) --}}
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label for="edit_tanggal_mulai" class="form-label">Tanggal Mulai</label>
+                            <input type="date" class="form-control @error('tanggal_mulai') is-invalid @enderror" id="edit_tanggal_mulai" name="tanggal_mulai" value="{{ old('tanggal_mulai') }}" required>
+                            @error('tanggal_mulai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="edit_jam_mulai" class="form-label">Jam Mulai</label>
+                            <input type="time" class="form-control @error('jam_mulai') is-invalid @enderror" id="edit_jam_mulai" name="jam_mulai" value="{{ old('jam_mulai') }}" required>
+                            @error('jam_mulai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    {{-- Waktu Selesai (Dipisah) --}}
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label for="edit_tanggal_selesai" class="form-label">Tanggal Selesai</label>
+                            <input type="date" class="form-control @error('tanggal_selesai') is-invalid @enderror" id="edit_tanggal_selesai" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required>
+                            @error('tanggal_selesai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label for="edit_jam_selesai" class="form-label">Jam Selesai</label>
+                            <input type="time" class="form-control @error('jam_selesai') is-invalid @enderror" id="edit_jam_selesai" name="jam_selesai" value="{{ old('jam_selesai') }}" required>
+                             @error('jam_selesai')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -338,7 +410,6 @@
     <div class="modal-dialog">
         <form id="formHapusSesi" method="POST">
             @csrf
-            @method('DELETE')
             <div class="modal-content">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title">Hapus Sesi Absensi</h5>
@@ -355,7 +426,6 @@
         </form>
     </div>
 </div>
-
 <!-- Modal Export Absensi -->
 <div class="modal fade" id="exportAbsensiModal" tabindex="-1" aria-labelledby="exportAbsensiLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -391,7 +461,7 @@
 </div>
 
 
-
+{{-- MODAL CARD PESERTA --}}
 {{-- ================= MODAL IMPORT ================= --}}
 <div class="modal fade" id="importPesertaModal" tabindex="-1" aria-labelledby="importPesertaLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -534,7 +604,7 @@
     </div>
 </div>
 
-{{-- edit peserta --}}
+{{-- MODAL Edit peserta --}}
 <div class="modal fade" id="editPesertaModal" tabindex="-1" aria-labelledby="editPesertaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -607,12 +677,10 @@
     </div>
 </div>
 
-
-
-
 @endsection
 
 @section('scripts')
+{{-- datatables --}}
 <script>
     $(document).ready(function() {
         $('#sesiTable, #pesertaTable').DataTable({
@@ -637,73 +705,140 @@
         });
     });
 </script>
+{{-- idkegiatan --}}
 <script>
     const idKegiatan = {{ $kegiatan->id }};
 </script>
+{{-- Card sesi kegiatan --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Edit sesi
-        document.querySelectorAll(".btn-edit-sesi").forEach(btn => {
-            btn.addEventListener("click", function () {
-                let id = this.dataset.id;
-                let nama = this.dataset.nama;
 
-                // isi input di modal
-                document.getElementById("namaSesi").value = nama;
+        // ✅ LANGKAH 1: Buat fungsi yang bisa dipakai ulang untuk mengisi modal edit
+        function populateEditSesiModal(button) {
+            const idSesi = button.getAttribute('data-id');
+            const nama = button.getAttribute('data-nama');
+            const waktuMulai = button.getAttribute('data-waktu_mulai');
+            const waktuSelesai = button.getAttribute('data-waktu_selesai');
+            
+            const editSesiModal = document.getElementById('editSesiModal');
+            const form = editSesiModal.querySelector('#formEditSesi');
 
-                // ubah action form sesuai ID
-                document.getElementById("formEditSesi")
-                    .setAttribute("action", `${idKegiatan}/kategori/update/${id}`);
+            // Buat URL action yang benar
+            let actionUrl = "{{ route('operator.kegiatan.sesi.update', ['kegiatan' => $kegiatan->id, 'sesi_absensi' => 'PLACEHOLDER']) }}".replace('PLACEHOLDER', idSesi);
+            form.setAttribute('action', actionUrl);
+
+            // Isi semua input di dalam form
+            form.querySelector('#edit_nama_sesi').value = nama;
+            form.querySelector('#edit_tanggal_mulai').value = waktuMulai.substring(0, 10);
+            form.querySelector('#edit_jam_mulai').value = waktuMulai.substring(11, 16);
+            form.querySelector('#edit_tanggal_selesai').value = waktuSelesai.substring(0, 10);
+            form.querySelector('#edit_jam_selesai').value = waktuSelesai.substring(11, 16);
+        }
+
+        // ===========================================
+        // LOGIKA UNTUK MODAL EDIT SESI
+        // ===========================================
+        const editSesiModal = document.getElementById('editSesiModal');
+        if (editSesiModal) {
+            // Panggil fungsi di atas saat modal dibuka lewat tombol
+            editSesiModal.addEventListener('show.bs.modal', function (event) {
+                populateEditSesiModal(event.relatedTarget);
             });
-        });
+        }
 
-        // Hapus sesi
-        document.querySelectorAll(".btn-hapus-sesi").forEach(btn => {
-            btn.addEventListener("click", function () {
-                let id = this.dataset.id;
-                let nama = this.dataset.nama;
+        // ===========================================
+        // LOGIKA UNTUK MODAL HAPUS SESI
+        // ===========================================
+        const hapusSesiModal = document.getElementById('hapusSesiModal');
+        if (hapusSesiModal) {
+            hapusSesiModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const idSesi = button.getAttribute('data-id');
+                const namaSesi = button.getAttribute('data-nama');
 
-                // tampilkan nama di modal
-                document.getElementById("hapusSesiNama").textContent = nama;
+                hapusSesiModal.querySelector('#hapusSesiNama').textContent = namaSesi;
+                const formHapus = hapusSesiModal.querySelector('#formHapusSesi');
 
-                // ubah action form sesuai ID
-                document.getElementById("formHapusSesi")
-                    .setAttribute("action", `${idKegiatan}/kategori/delete/${id}`);
+                let actionUrl = "{{ route('operator.kegiatan.sesi.destroy', ['kegiatan' => $kegiatan->id, 'sesi_absensi' => 'PLACEHOLDER']) }}".replace('PLACEHOLDER', idSesi);
+                formHapus.setAttribute('action', actionUrl);
             });
-        });
+        }
+
+        // ===========================================
+        // SCRIPT UNTUK MEMBUKA KEMBALI MODAL SETELAH VALIDASI GAGAL
+        // ===========================================
+        @if ($errors->any())
+            const formType = "{{ old('form_type') }}";
+            
+            if (formType === 'add_sesi') {
+                const tambahModal = new bootstrap.Modal(document.getElementById('tambahSesiModal'));
+                tambahModal.show();
+            } else if ("{{ session('failed_edit_sesi_id') }}") {
+                // ✅ LANGKAH 2: Logika baru saat validasi edit gagal
+                const failedId = "{{ session('failed_edit_sesi_id') }}";
+                const editButton = document.querySelector(`.btn-edit-sesi[data-id="${failedId}"]`);
+                
+                if (editButton) {
+                    // Panggil fungsi yang sama untuk mengisi form SEBELUM modal ditampilkan
+                    populateEditSesiModal(editButton);
+                    
+                    // Baru tampilkan modalnya
+                    const editModalInstance = new bootstrap.Modal(editSesiModal);
+                    editModalInstance.show();
+                }
+            }
+        @endif
+
+        // ===========================================
+        // LOGIKA UNTUK MODAL EXPORT ABSENSI
+        // ===========================================
+        const exportButton = document.getElementById('btn-do-export');
+        if (exportButton) {
+            exportButton.addEventListener('click', function() {
+                const selectElement = document.getElementById('sesi_pilihan_export');
+                const selectedSesiId = selectElement.value;
+                if (!selectedSesiId) {
+                    alert('Silakan pilih sesi terlebih dahulu.');
+                    return;
+                }
+                let baseUrl = "{{ route('operator.absensi.export', [$kegiatan->id, 'PLACEHOLDER']) }}";
+                let finalUrl = baseUrl.replace('PLACEHOLDER', selectedSesiId);
+                window.location.href = finalUrl;
+            });
+        }
+
     });
 </script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const exportButton = document.getElementById('btn-do-export');
-    
-    if (exportButton) {
-        exportButton.addEventListener('click', function() {
-            const selectElement = document.getElementById('sesi_pilihan_export');
-            const selectedSesiId = selectElement.value;
-
-            if (!selectedSesiId) {
-                alert('Silakan pilih sesi terlebih dahulu.');
-                return;
-            }
-
-            // Buat URL dasar dari route, gunakan placeholder
-            // JavaScript disesuaikan dengan nama route baru
-            let baseUrl = "{{ route('operator.absensi.export', [$kegiatan->id, 'PLACEHOLDER']) }}";
-            
-            // Ganti placeholder dengan ID sesi yang dipilih (bisa "all" atau angka)
-            let finalUrl = baseUrl.replace('PLACEHOLDER', selectedSesiId);
-            
-            // Arahkan browser untuk men-download dari URL yang sudah jadi
-            window.location.href = finalUrl;
-        });
-    }
-});
-</script>
-
+{{-- Card Peserta --}}
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
+        // ===========================================
+        // untuk import export
+        const exportButton = document.getElementById('btn-do-export');
+        
+        if (exportButton) {
+            exportButton.addEventListener('click', function() {
+                const selectElement = document.getElementById('sesi_pilihan_export');
+                const selectedSesiId = selectElement.value;
+
+                if (!selectedSesiId) {
+                    alert('Silakan pilih sesi terlebih dahulu.');
+                    return;
+                }
+
+                // Buat URL dasar dari route, gunakan placeholder
+                // JavaScript disesuaikan dengan nama route baru
+                let baseUrl = "{{ route('operator.absensi.export', [$kegiatan->id, 'PLACEHOLDER']) }}";
+                
+                // Ganti placeholder dengan ID sesi yang dipilih (bisa "all" atau angka)
+                let finalUrl = baseUrl.replace('PLACEHOLDER', selectedSesiId);
+                
+                // Arahkan browser untuk men-download dari URL yang sudah jadi
+                window.location.href = finalUrl;
+            });
+        }
 
         // ===========================================
         // LOGIKA UNTUK MODAL ABSEN MANUAL
