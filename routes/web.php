@@ -7,7 +7,6 @@ use App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Operator;
-use App\Http\Controllers\Peserta;
 use App\Http\Controllers\Operator\SesiAbsensiController; 
 
 
@@ -115,6 +114,5 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
 
 
 Route::middleware(['auth', 'role:peserta'])->group(function () {
-    Route::get('/peserta', [Peserta\DashboardController::class, 'index'])->name('peserta.dashboard');
     
 });
