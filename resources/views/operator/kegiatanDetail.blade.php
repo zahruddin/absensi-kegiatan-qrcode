@@ -172,11 +172,11 @@
                                     </a>
                                     
                                     {{-- ✅ DITAMBAHKAN: Tombol Scan QR hanya muncul jika sesi sedang berlangsung --}}
-                                    @if ($sesi->waktu_mulai && $sesi->waktu_selesai && now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
+                                    {{-- @if ($sesi->waktu_mulai && $sesi->waktu_selesai && now()->between($sesi->waktu_mulai, $sesi->waktu_selesai)) --}}
                                         <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm" target="_blank" title="Scan QR">
                                             <i class="bi bi-qr-code-scan"></i>
                                         </a>
-                                    @endif
+                                    {{-- @endif --}}
                                     
                                     <button class="btn btn-warning btn-sm btn-edit-sesi"
                                             data-bs-toggle="modal"
