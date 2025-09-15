@@ -58,13 +58,14 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
     Route::get('/operator', [Operator\DashboardController::class, 'index'])
         ->name('operator.dashboard');
 
-    // ====== KEGIATAN ======
+
+    // ====== KELOLA KEGIATAN ======
     Route::prefix('operator/kegiatan')->name('operator.kegiatan.')->group(function () {
         Route::get('/', [Operator\KegiatanController::class, 'index'])->name('index');
-        Route::get('/{id}', [Operator\KegiatanController::class, 'detail'])->name('detail');
+        Route::get('/detail/{kegiatan}', [Operator\KegiatanController::class, 'detail'])->name('detail');
         Route::post('/store', [Operator\KegiatanController::class, 'store'])->name('store');
-        Route::put('/update/{id}', [Operator\KegiatanController::class, 'update'])->name('update');
-        Route::delete('/delete/{id}', [Operator\KegiatanController::class, 'delete'])->name('delete');
+        Route::put('/update/{kegiatan}', [Operator\KegiatanController::class, 'update'])->name('update');
+        Route::delete('/destroy/{kegiatan}', [Operator\KegiatanController::class, 'destroy'])->name('destroy');
     });
 
     // ====== SESI absensi / ======

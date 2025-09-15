@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
 
 class Kegiatan extends Model
 {
@@ -20,6 +21,16 @@ class Kegiatan extends Model
         'qrcode',
         'date',
     ];
+
+    protected static function booted(): void
+    {
+        static::deleting(function (Kegiatan $kegiatan) {
+            // Hapus file QR kegiatan jika ada
+            if ($kegiatan->qrcode) {
+                Storage::disk('public')->delete($kegiatan->qrcode);
+            }
+        });
+    }
 
     /**
      * Relasi ke model User.
