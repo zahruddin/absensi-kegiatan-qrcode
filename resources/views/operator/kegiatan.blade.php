@@ -98,7 +98,8 @@
                                             data-bs-target="#editKegiatanModal" 
                                             data-id="{{ $kegiatan->id }}" 
                                             data-nama="{{ $kegiatan->nama }}" 
-                                            data-date="{{ $kegiatan->date }}">
+                                            {{-- Di sini kita format tanggalnya agar sesuai dengan input type="date" --}}
+                                            data-date="{{ \Carbon\Carbon::parse($kegiatan->date)->format('Y-m-d') }}">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
                                         <button type="button" class="btn btn-danger btn-sm btn-hapus"
