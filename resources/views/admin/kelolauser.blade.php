@@ -98,8 +98,8 @@
                                 <select class="form-select" name="role" required>
                                     <option value="">-- Pilih Role --</option>
                                     <option value="admin">Admin</option>
-                                    <option value="kasir">Kasir</option>
-                                    <option value="customer">Customer</option>
+                                    <option value="kasir">Operator</option>
+                                    <option value="customer">Peserta</option>
                                 </select>
                             </div>
 

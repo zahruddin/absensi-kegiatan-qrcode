@@ -44,14 +44,46 @@ Route::post('/logout', function () {
 Route::get('/scan/{idmeja}', [Customer\MenuController::class, 'scanQRCode'])->name('customer.scan.qrcode');
 Route::post('/konfirmasi', [Customer\MenuController::class, 'konfirmasiPembayaran'])->name('customer.konfirmasi');
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin', function() { return redirect()->route('admin.dashboard'); })->name('redirect.admin.dashboard'); 
-    Route::get('/admin/dashboard', [Admin\DashboardController::class, 'index'])->name('admin.dashboard');
-    Route::get('/admin/profile', [Admin\ProfileController::class, 'index'])->name('admin.profile');
-    Route::get('/admin/kelolauser', [Admin\kelolaUserController::class, 'index'])->name('admin.kelolaUsers');
-    Route::post('/admin/kelolauser', [Admin\kelolaUserController::class, 'store'])->name('admin.kelolauser.add');
-    Route::post('/admin/kelolauser/{id}', [Admin\kelolaUserController::class, 'delete'])->name('admin.kelolauser.delete');
-    Route::put('/admin/kelolauser/update/{id}', [Admin\kelolaUserController::class, 'update'])->name('admin.kelolauser.update');
+// ====== GRUP ROUTE ADMIN YANG DISESUAIKAN DENGAN ATURAN ANDA ======
+Route::middleware(['auth', 'role:admin'])
+     ->prefix('admin') // <- Menghindari pengetikan '/admin' berulang kali
+     ->name('admin.')  // <- Menghindari pengetikan 'admin.' berulang kali
+     ->group(function () {
+
+    // --- Dashboard & Profile ---
+    // URL: /admin/dashboard -> Nama Route: admin.dashboard
+    // Redirect dari /admin ke /admin/dashboard
+    Route::get('/', function() { return redirect()->route('admin.dashboard'); });
+    Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('dashboard');
+    
+    // URL: /admin/profile -> Nama Route: admin.profile
+    Route::get('/profile', [Admin\ProfileController::class, 'index'])->name('profile');
+
+
+    // --- Kelola Operator ---
+    // URL: /admin/operator -> Nama Route: admin.operator.index
+    Route::get('/operator', [Admin\OperatorController::class, 'index'])->name('operator.index');
+    
+    // URL: /admin/operator/store -> Nama Route: admin.operator.store
+    Route::post('/operator/store', [Admin\OperatorController::class, 'store'])->name('operator.store');
+    
+    // URL: /admin/operator/update/{user} -> Nama Route: admin.operator.update
+    Route::put('/operator/update/{user}', [Admin\OperatorController::class, 'update'])->name('operator.update');
+    
+    // URL: /admin/operator/destroy/{user} -> Nama Route: admin.operator.destroy
+    Route::delete('/operator/destroy/{user}', [Admin\OperatorController::class, 'destroy'])->name('operator.destroy');
+
+
+    // --- Kelola Peserta ---
+    // URL: /admin/peserta -> Nama Route: admin.peserta.index
+    Route::get('/peserta', [Admin\PesertaController::class, 'index'])->name('peserta.index');
+    // ... Tambahkan route store, update, destroy untuk peserta di sini jika Anda perlukan ...
+
+
+    // --- Kelola Kegiatan ---
+    // URL: /admin/kegiatan -> Nama Route: admin.kegiatan.index
+    Route::get('/kegiatan', [Admin\KegiatanController::class, 'index'])->name('kegiatan.index');
+    // ... Tambahkan route store, update, destroy untuk kegiatan di sini jika Anda perlukan ...
 });
 
 

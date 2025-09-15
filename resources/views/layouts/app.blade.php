@@ -233,31 +233,40 @@
                     >
                         <!-- Menu untuk Admin -->
                         @if(Auth::user()->role == 'admin')
-                            <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                            <li class="nav-item">
                                 <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-speedometer"></i>
-                                        <p>
-                                            Dashboard
-                                        </p>
+                                    <i class="nav-icon bi bi-speedometer2"></i>
+                                    <p>Dashboard</p>
                                 </a>
                             </li>
-                            {{-- <li class="nav-item {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
-                                <a href="{{ route('admin.laporanPenjualan') }}" class="nav-link {{ request()->routeIs('admin.laporanPenjualan') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-speedometer"></i>
-                                        <p>
-                                            Laporan Penjualan
-                                        </p>
+                            
+                            {{-- Menu Kelola Operator --}}
+                            <li class="nav-item">
+                                {{-- routeIs('admin.operator.*') akan aktif di semua halaman operator (index, create, edit) --}}
+                                <a href="{{ route('admin.operator.index') }}" class="nav-link {{ request()->routeIs('admin.operator.*') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-person-badge"></i>
+                                    <p>Kelola Operator</p>
                                 </a>
-                            </li> --}}
-                            <li class="nav-item {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
-                                <a href="{{ route('admin.kelolaUsers') }}" class="nav-link {{ request()->routeIs('admin.kelolaUsers') ? 'active' : '' }}">
-                                    <i class="nav-icon bi bi-people"></i>
-                                        <p>
-                                            Kelola Users
-                                        </p>
+                            </li>
+
+                            {{-- Menu Kelola Peserta --}}
+                            <li class="nav-item">
+                                <a href="{{ route('admin.peserta.index') }}" class="nav-link {{ request()->routeIs('admin.peserta.*') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-people-fill"></i>
+                                    <p>Kelola Peserta</p>
+                                </a>
+                            </li>
+
+                            {{-- Menu Kelola Kegiatan --}}
+                            <li class="nav-item">
+                                <a href="{{ route('admin.kegiatan.index') }}" class="nav-link {{ request()->routeIs('admin.kegiatan.*') ? 'active' : '' }}">
+                                    <i class="nav-icon bi bi-calendar-event"></i>
+                                    <p>Kelola Kegiatan</p>
                                 </a>
                             </li>
                         @endif
+
+
                         <!-- Menu untuk operator -->
                         @if(Auth::user()->role == 'operator')
                             <li class="nav-item">
@@ -390,6 +399,7 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <!--end::Script-->
         @yield('scripts')
+        @stack('scripts')
         <script>
             (() => {
                 "use strict";
