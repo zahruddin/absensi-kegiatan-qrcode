@@ -82,6 +82,7 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
         Route::post('/store', [Operator\PesertaController::class, 'store'])->name('store');
         Route::put('/update/{id}', [Operator\PesertaController::class, 'update'])->name('update');
         Route::delete('/delete/{id}', [Operator\PesertaController::class, 'delete'])->name('delete');
+        Route::delete('/destroy-all/{kegiatan}', [Operator\PesertaController::class, 'destroyAll'])->name('destroy.all');
         Route::get('/export/{kegiatan}', [Operator\PesertaController::class, 'export'])->name('export');
         Route::get('/export/link-qr/{kegiatan}', [Operator\PesertaController::class, 'exportLinkQr'])->name('export.linkqr');
         Route::post('/import', [Operator\PesertaController::class, 'import'])->name('import');
@@ -96,7 +97,6 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
         Route::get('/show/{sesi_absensi}', [Operator\AbsensiController::class, 'show'])->name('show');
         // Ganti route 'scan' lama Anda dengan ini
         Route::get('/scan/{sesi_absensi}', [Operator\AbsensiController::class, 'scan'])->name('scan');
-
 
         Route::get('', [Operator\AbsensiController::class, 'export'])->name('export.absensi');
         // Tambahkan route baru ini untuk memproses data dari scanner

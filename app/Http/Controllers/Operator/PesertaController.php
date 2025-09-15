@@ -107,6 +107,26 @@ class PesertaController extends Controller
 
         return redirect()->back()->with('success', 'Peserta berhasil dihapus.');
     }
+    
+    public function destroyAll(Kegiatan $kegiatan)
+    {
+        // 1. Ambil semua path file QR code yang akan dihapus
+        $qrCodePaths = $kegiatan->peserta()->whereNotNull('qrcode')->pluck('qrcode');
+
+        // 2. Hapus semua file QR code dari storage dalam satu perintah
+        if ($qrCodePaths->isNotEmpty()) {
+            Storage::disk('public')->delete($qrCodePaths->all());
+        }
+
+        // 3. Hapus semua record peserta dari database dalam satu query.
+        // Karena ada onDelete('cascade') di tabel absensi, semua data absensi
+        // yang terkait dengan peserta-peserta ini akan ikut terhapus otomatis.
+        $kegiatan->peserta()->delete();
+
+        // 4. Redirect kembali dengan pesan sukses
+        return redirect()->back()->with('success', 'Semua peserta berhasil dihapus dari kegiatan.');
+    }
+
     public function import(Request $request)
     {
         // 3. Validasi request dari form modal

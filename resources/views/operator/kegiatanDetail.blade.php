@@ -97,9 +97,6 @@
         </div>
 
 
-
-
-        {{-- ====== DAFTAR SESI ABSENSI ====== --}}
         {{-- ====== DAFTAR SESI ABSENSI ====== --}}
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
@@ -211,17 +208,20 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Data Peserta</h5>
                 <div>
-                    <a href="{{ route('operator.peserta.export.linkqr', $kegiatan->id) }}" class="btn btn-success btn-sm">
-                        <i class="bi bi-file-earmark-excel"></i> Export link qrcode
-                    </a>
-                    <a href="{{ route('operator.peserta.export', $kegiatan->id) }}" class="btn btn-success btn-sm">
-                        <i class="bi bi-file-earmark-excel"></i> Export Excel
-                    </a>
+                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#tambahPesertaModal">
+                        <i class="bi bi-plus-circle"></i> Tambah Peserta
+                    </button>
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#importPesertaModal">
                         <i class="bi bi-upload"></i> Import Peserta
                     </button>
-                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#tambahPesertaModal">
-                        <i class="bi bi-plus-circle"></i> Tambah Peserta
+                    <a href="{{ route('operator.peserta.export', $kegiatan->id) }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Export Excel
+                    </a>
+                    <a href="{{ route('operator.peserta.export.linkqr', $kegiatan->id) }}" class="btn btn-success btn-sm">
+                        <i class="bi bi-file-earmark-excel"></i> Export link qrcode
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapusSemuaPesertaModal">
+                        <i class="bi bi-trash3-fill"></i> Hapus Semua Peserta
                     </button>
                 </div>
             </div>
@@ -717,6 +717,34 @@
                 </div>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Hapus Semua Peserta -->
+<div class="modal fade" id="hapusSemuaPesertaModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            {{-- Form ini akan mengirim request ke route yang akan kita buat --}}
+            <form action="{{ route('operator.peserta.destroy.all', $kegiatan->id) }}" method="POST">
+                @csrf
+                @method('DELETE')
+
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Konfirmasi Hapus Semua Peserta</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda benar-benar yakin ingin menghapus **SEMUA** peserta dari kegiatan ini?</p>
+                    <p class="text-danger fw-bold">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Tindakan ini tidak dapat dibatalkan. Semua file QR code dan data absensi yang terkait dengan peserta akan terhapus secara permanen.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger">Ya, Hapus Semua</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 
