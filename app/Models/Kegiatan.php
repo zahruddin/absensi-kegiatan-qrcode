@@ -15,6 +15,11 @@ class Kegiatan extends Model
     // Nama tabel jika tidak mengikuti konvensi Laravel (opsional, tapi baik untuk kejelasan)
     protected $table = 'kegiatan';
 
+    protected $casts = [
+        'id_user' => 'integer',
+        'date' => 'date',
+    ];
+
     protected $fillable = [
         'id_user',
         'nama',
