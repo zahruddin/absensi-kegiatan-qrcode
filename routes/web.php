@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Operator;
 use App\Http\Controllers\Operator\SesiAbsensiController; 
+use App\Http\Controllers\Public\PendaftaranController;
 
 
 /*
@@ -29,6 +30,8 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); 
 Route::post('/login', [LoginController::class, 'login']); // Proses login
 Route::get('/register', [RegisterController::class, 'showForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register']);
+Route::get('/register/{kegiatan}', [PendaftaranController::class, 'show'])->name('kegiatan.register.show');
+Route::post('/register/{kegiatan}', [PendaftaranController::class, 'store'])->name('kegiatan.register.store')->middleware('auth');
 
 Route::get('/kegiatan/info/{id}', [App\Http\Controllers\InfoController::class, 'show'])->name('kegiatan.info');
 
@@ -66,6 +69,7 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
         Route::post('/store', [Operator\KegiatanController::class, 'store'])->name('store');
         Route::put('/update/{kegiatan}', [Operator\KegiatanController::class, 'update'])->name('update');
         Route::delete('/destroy/{kegiatan}', [Operator\KegiatanController::class, 'destroy'])->name('destroy');
+        Route::get('/download-qrcode/{kegiatan}', [Operator\KegiatanController::class, 'downloadQRCode'])->name('download_qrcode');
     });
 
     // ====== SESI absensi / ======

@@ -35,7 +35,8 @@
                 </div>
             </div>
         </div>
-        
+
+        {{-- CARD KEGIATAN --}}
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Daftar Kegiatan</h5>
@@ -49,6 +50,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>QR CODE</th>
                                 <th>Nama Kegiatan</th>
                                 <th>Tanggal</th>
                                 <th>Status</th>
@@ -61,6 +63,13 @@
                             @forelse($kegiatans as $kegiatan)
                                 <tr>
                                     <td>{{ $loop->iteration + $kegiatans->firstItem() - 1 }}</td>
+                                    <td class="text-center">
+                                        @if ($kegiatan->qrcode)
+                                            <img src="{{ asset('storage/' . $kegiatan->qrcode) }}" alt="QR Code" width="80">
+                                        @else
+                                            <span class="text-muted">N/A</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('operator.kegiatan.detail', $kegiatan->id) }}" class="fw-bold">{{ $kegiatan->nama }}</a>
                                     </td>
@@ -80,6 +89,10 @@
                                         <a href="{{ route('operator.kegiatan.detail', $kegiatan->id) }}" class="btn btn-info btn-sm" title="Lihat Detail">
                                             <i class="bi bi-eye"></i>
                                         </a>
+                                        {{-- Tombol Download QR Code --}}
+                                        <a href="{{ route('operator.kegiatan.download_qrcode', $kegiatan->id) }}" class="btn btn-primary btn-sm" title="Download QR Code">
+                                            <i class="bi bi-download"></i>
+                                        </a>
                                         <button type="button" class="btn btn-warning btn-sm btn-edit" 
                                             data-bs-toggle="modal" 
                                             data-bs-target="#editKegiatanModal" 
@@ -95,6 +108,7 @@
                                             data-nama="{{ $kegiatan->nama }}">
                                             <i class="bi bi-trash"></i>
                                         </button>
+
                                     </td>
                                 </tr>
                             @empty

@@ -29,7 +29,7 @@ class RegisterController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'customer', // default role, bisa 'admin' jika khusus
+            'role' => 'peserta', // default role, bisa 'admin' jika khusus
         ]);
 
         return redirect('/login')->with('success', 'Akun berhasil dibuat! Silakan login.');

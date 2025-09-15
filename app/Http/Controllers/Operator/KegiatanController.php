@@ -8,6 +8,9 @@ use App\Models\Kegiatan;
 use App\Models\SesiAbsensi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage; // <-- 1. Import Storage
+use Illuminate\Support\Str;              // <-- 2. Import Str
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class KegiatanController extends Controller
 {
@@ -36,15 +39,31 @@ class KegiatanController extends Controller
             'date' => 'required|date',
         ]);
 
-        // Tidak perlu generate QR untuk kegiatan itu sendiri, karena tidak digunakan
-        Kegiatan::create([
+        // Langkah 1: Buat data kegiatan terlebih dahulu untuk mendapatkan ID-nya
+        $kegiatan = Kegiatan::create([
             'id_user' => Auth::id(),
             'nama' => $request->nama,
             'date' => $request->date,
-            'status' => 'aktif', // Status default saat dibuat
+            'status' => 'aktif',
+            'qrcode' => '', // Dikosongkan sementara
         ]);
 
-        return redirect()->back()->with('success', 'Kegiatan baru berhasil ditambahkan.');
+        // Langkah 2: Buat konten QR, yaitu URL ke halaman pendaftaran publik
+        $qrContent = route('kegiatan.register.show', $kegiatan->id); 
+
+        // Langkah 3: Buat nama file yang aman dan unik
+        $safeName = Str::slug($kegiatan->nama);
+        $fileName = 'kegiatan_qr_' . $safeName . '_' . $kegiatan->id . '.png';
+        $filePath = 'qrcode_kegiatan/' . $fileName; // Path di dalam storage/app/public
+
+        // Langkah 4: Generate dan simpan gambar QR Code
+        $qrCodeImage = QrCode::format('png')->size(300)->margin(2)->generate($qrContent);
+        Storage::disk('public')->put($filePath, $qrCodeImage);
+
+        // Langkah 5: Update record kegiatan dengan path QR Code yang benar
+        $kegiatan->update(['qrcode' => $filePath]);
+
+        return redirect()->back()->with('success', 'Kegiatan berhasil ditambahkan beserta QR Code pendaftaran.');
     }
     
     /**
@@ -119,5 +138,26 @@ class KegiatanController extends Controller
 
         return redirect()->route('operator.kegiatan.index')
                          ->with('success', 'Kegiatan dan semua datanya berhasil dihapus.');
+    }
+
+    public function downloadQRCode(Kegiatan $kegiatan)
+    {
+        // 1. Pastikan kegiatan memiliki QR code
+        if (!$kegiatan->qrcode) {
+            return redirect()->back()->with('error', 'Kegiatan ini tidak memiliki QR Code.');
+        }
+
+        // 2. Cek apakah file benar-benar ada di storage
+        if (!Storage::disk('public')->exists($kegiatan->qrcode)) {
+            return redirect()->back()->with('error', 'File QR Code tidak ditemukan di server.');
+        }
+
+        // 3. Buat nama file yang akan diunduh oleh pengguna
+        $fileName = 'qrcode-' . Str::slug($kegiatan->nama) . '.png';
+
+        // 4. Ambil path lengkap ke file dan kirim sebagai respons unduhan
+        $filePath = Storage::disk('public')->path($kegiatan->qrcode);
+        
+        return response()->download($filePath, $fileName);
     }
 }

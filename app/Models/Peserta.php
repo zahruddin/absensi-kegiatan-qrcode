@@ -59,4 +59,9 @@ class Peserta extends Model
     {
         return $this->hasMany(Absensi::class, 'id_peserta');
     }
+
+    public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class, 'id_user');
+}
 }
