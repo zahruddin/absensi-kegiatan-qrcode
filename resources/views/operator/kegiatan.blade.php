@@ -8,29 +8,47 @@
     <div class="container-fluid">
         @include('components.alert')
 
-        {{-- Kartu Statistik Ringkas --}}
+        {{-- ====== Kartu Statistik Ringkas ====== --}}
         <div class="row mb-4">
             <div class="col-md-4">
-                <div class="card text-center shadow-sm">
+                <div class="card text-white bg-primary h-100 shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Total Kegiatan</h5>
-                        <h2>{{ $kegiatans->total() }}</h2>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Total Kegiatan</h5>
+                                {{-- Logika tidak diubah, sesuai permintaan --}}
+                                <h2>{{ $kegiatans->total() }}</h2>
+                            </div>
+                            <i class="bi bi-calendar-event fs-1 opacity-50"></i>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card text-center shadow-sm">
+                <div class="card text-white bg-success h-100 shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Kegiatan Aktif</h5>
-                        <h2 class="text-success">{{ $kegiatans->where('date', '>=', now()->format('Y-m-d'))->count() }}</h2>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Kegiatan Aktif</h5>
+                                {{-- Logika tidak diubah, sesuai permintaan --}}
+                                <h2 class="text-white">{{ $kegiatans->where('date', '>=', now()->format('Y-m-d'))->count() }}</h2>
+                            </div>
+                            <i class="bi bi-calendar-check fs-1 opacity-50"></i>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card text-center shadow-sm">
+                <div class="card text-white bg-secondary h-100 shadow">
                     <div class="card-body">
-                        <h5 class="card-title">Kegiatan Selesai</h5>
-                        <h2 class="text-muted">{{ $kegiatans->where('date', '<', now()->format('Y-m-d'))->count() }}</h2>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Kegiatan Selesai</h5>
+                                {{-- Logika tidak diubah, sesuai permintaan --}}
+                                <h2 class="text-white-50">{{ $kegiatans->where('date', '<', now()->format('Y-m-d'))->count() }}</h2>
+                            </div>
+                            <i class="bi bi-calendar-x fs-1 opacity-50"></i>
+                        </div>
                     </div>
                 </div>
             </div>
