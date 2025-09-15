@@ -20,30 +20,35 @@ class AbsensiController extends Controller
      */
     public function show(SesiAbsensi $sesi_absensi)
     {
-        // 1. Ambil data kegiatan dan muat semua pesertanya (Eager Loading)
+        // 1. Ambil data kegiatan dan semua peserta yang terdaftar di kegiatan tersebut
         $kegiatan = $sesi_absensi->kegiatan()->with('peserta')->first();
+        $semuaPesertaKegiatan = $kegiatan->peserta;
 
-        // 2. Ambil daftar ID peserta yang SUDAH diabsen di sesi ini
-        $pesertaHadirIds = Absensi::where('id_sesi', $sesi_absensi->id)
-                                  ->pluck('id_peserta');
+        // 2. Ambil data Absensi untuk sesi ini, dan "eager load" data Peserta-nya
+        // Ini adalah perubahan utama. Kita sekarang mengambil koleksi Absensi.
+        $absensiHadir = Absensi::where('id_sesi', $sesi_absensi->id)
+                            ->with('peserta') // Muat relasi peserta untuk efisiensi
+                            ->orderBy('waktu_absen', 'asc')
+                            ->get();
 
-        // 3. Pisahkan daftar peserta menjadi dua: yang sudah hadir dan yang belum
-        // Ini dilakukan di memori (collection), jadi sangat cepat
-        $pesertaHadir = $kegiatan->peserta->whereIn('id', $pesertaHadirIds);
-        $pesertaBelumHadir = $kegiatan->peserta->whereNotIn('id', $pesertaHadirIds);
+        // 3. Dapatkan daftar ID dari peserta yang sudah hadir
+        $pesertaHadirIds = $absensiHadir->pluck('peserta.id');
 
-        // 4. Siapkan data statistik untuk ditampilkan
+        // 4. Saring untuk mendapatkan daftar peserta yang BELUM hadir
+        $pesertaBelumHadir = $semuaPesertaKegiatan->whereNotIn('id', $pesertaHadirIds);
+
+        // 5. Siapkan data statistik (logikanya tetap sama, tapi sumber datanya lebih baik)
         $statistik = [
-            'totalPeserta' => $kegiatan->peserta->count(),
-            'jumlahHadir' => $pesertaHadir->count(),
+            'totalPeserta' => $semuaPesertaKegiatan->count(),
+            'jumlahHadir' => $absensiHadir->count(),
             'jumlahBelumHadir' => $pesertaBelumHadir->count(),
         ];
 
-        // 5. Kirim semua data ke view
+        // 6. Kirim semua data ke view
         return view('operator.absensiShow', [
             'sesi_absensi'      => $sesi_absensi,
             'kegiatan'          => $kegiatan,
-            'pesertaHadir'      => $pesertaHadir,
+            'absensiHadir'      => $absensiHadir, // <-- Kirim koleksi Absensi, bukan Peserta
             'pesertaBelumHadir' => $pesertaBelumHadir,
             'statistik'         => $statistik,
         ]);

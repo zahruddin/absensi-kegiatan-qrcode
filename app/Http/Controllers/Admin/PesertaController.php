@@ -13,7 +13,7 @@ class PesertaController extends Controller
     public function index()
     {
         // Ambil semua peserta beserta relasi ke kegiatan dan user (jika ada)
-        $pesertas = ;
+        // $pesertas = ;
         return view('admin.peserta', compact('pesertas'));
     }
 }

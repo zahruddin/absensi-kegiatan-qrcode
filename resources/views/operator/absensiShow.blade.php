@@ -60,16 +60,22 @@
                                 <th>No</th>
                                 <th>Nama Peserta</th>
                                 <th>NIM</th>
-                                <th>kelompok</th>
+                                <th>Kelompok</th>
+                                {{-- ✅ DITAMBAHKAN: Kolom baru untuk Waktu Absen --}}
+                                <th>Waktu Absen</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($pesertaHadir as $index => $peserta)
+                            {{-- ✅ DIUBAH: Loop sekarang menggunakan $absensiHadir --}}
+                            @foreach ($absensiHadir as $index => $absensi)
                             <tr>
                                 <td>{{ $index + 1 }}</td>
-                                <td>{{ $peserta->nama }}</td>
-                                <td>{{ $peserta->nim ?? '-' }}</td>
-                                <td>{{ $peserta->kelompok ?? '-' }}</td>
+                                {{-- ✅ DIUBAH: Akses data peserta melalui relasi --}}
+                                <td>{{ $absensi->peserta->nama ?? 'N/A' }}</td>
+                                <td>{{ $absensi->peserta->nim ?? '-' }}</td>
+                                <td>{{ $absensi->peserta->kelompok ?? '-' }}</td>
+                                {{-- ✅ DITAMBAHKAN: Tampilkan waktu absen dan format --}}
+                                <td>{{ $absensi->waktu_absen->format('H:i:s') }} WIB</td>
                             </tr>
                             @endforeach
                         </tbody>

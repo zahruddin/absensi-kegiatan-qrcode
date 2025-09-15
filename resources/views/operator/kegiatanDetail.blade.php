@@ -220,9 +220,9 @@
                     <a href="{{ route('operator.peserta.export.linkqr', $kegiatan->id) }}" class="btn btn-success btn-sm">
                         <i class="bi bi-file-earmark-excel"></i> Export link qrcode
                     </a>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapusSemuaPesertaModal">
+                    {{-- <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapusSemuaPesertaModal">
                         <i class="bi bi-trash3-fill"></i> Hapus Semua Peserta
-                    </button>
+                    </button> --}}
                 </div>
             </div>
             <div class="card-body">
