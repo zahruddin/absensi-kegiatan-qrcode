@@ -72,7 +72,7 @@ class KegiatanController extends Controller
      */
     public function detail(Kegiatan $kegiatan)
     {
-        dd(Auth::check(), Auth::id());
+        // dd(Auth::check(), Auth::id());
         // Memastikan operator hanya bisa melihat kegiatannya sendiri (keamanan tambahan)
         if ($kegiatan->id_user !== Auth::id()) {
             abort(403, 'Anda tidak memiliki akses ke kegiatan ini.');
