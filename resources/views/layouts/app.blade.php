@@ -213,9 +213,9 @@
                     /> --}}
                     <!--end::Brand Image-->
                     <!--begin::Brand Text-->
-                    {{-- <span class="brand-text fw-light">Welijo</span> --}}
+                    <span class="brand-text fw-light">ADMIN KEGIATAN</span>
                     <!--end::Brand Text-->
-                    <b>ADMIN KEGIATAN</b>
+                    {{-- <b>ADMIN KEGIATAN</b> --}}
                 </a>
                 <!--end::Brand Link-->
                 </div>
@@ -277,6 +277,7 @@
                                 </a>
                             </li>
                         @endif
+                        {{-- Menu untuk peserta --}}
                         @if(Auth::user()->role == 'peserta')
                             <li class="nav-item {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
                                 <a href="{{ route('customer.menu') }}" class="nav-link {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
