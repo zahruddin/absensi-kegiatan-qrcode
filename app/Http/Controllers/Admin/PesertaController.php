@@ -13,7 +13,7 @@ class PesertaController extends Controller
     public function index()
     {
         // Ambil semua peserta beserta relasi ke kegiatan dan user (jika ada)
-        $pesertas = Peserta::with(['kegiatan', 'user'])->latest()->paginate(15);
+        $pesertas = ;
         return view('admin.peserta', compact('pesertas'));
     }
 }

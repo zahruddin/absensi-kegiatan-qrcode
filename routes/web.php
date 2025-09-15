@@ -61,16 +61,9 @@ Route::middleware(['auth', 'role:admin'])
 
 
     // --- Kelola Operator ---
-    // URL: /admin/operator -> Nama Route: admin.operator.index
     Route::get('/operator', [Admin\OperatorController::class, 'index'])->name('operator.index');
-    
-    // URL: /admin/operator/store -> Nama Route: admin.operator.store
     Route::post('/operator/store', [Admin\OperatorController::class, 'store'])->name('operator.store');
-    
-    // URL: /admin/operator/update/{user} -> Nama Route: admin.operator.update
     Route::put('/operator/update/{user}', [Admin\OperatorController::class, 'update'])->name('operator.update');
-    
-    // URL: /admin/operator/destroy/{user} -> Nama Route: admin.operator.destroy
     Route::delete('/operator/destroy/{user}', [Admin\OperatorController::class, 'destroy'])->name('operator.destroy');
 
 
