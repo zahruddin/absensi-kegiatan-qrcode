@@ -116,93 +116,95 @@
                 </div>
             </div>
             <div class="card-body">
-                <table id="sesiTable" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Sesi</th>
-                            {{-- ✅ DITAMBAHKAN: Kolom Status --}}
-                            <th>Status</th>
-                            <th>Waktu Mulai</th>
-                            {{-- ✅ DITAMBAHKAN: Header untuk Waktu Selesai --}}
-                            <th>Waktu Selesai</th>
-                            <th>Jumlah Hadir</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($sesiAbsensi as $index => $sesi)
+                <div class="table-responsive">
+                    <table id="sesiTable" class="table table-bordered table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $sesi->nama }}</td>
-                                
-                                {{-- ✅ DITAMBAHKAN: Logika untuk menampilkan status sesi secara dinamis --}}
-                                <td>
-                                    @if ($sesi->waktu_mulai && $sesi->waktu_selesai)
-                                        @if(now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
-                                            <span class="badge bg-success pulsing-badge">Sedang Berlangsung</span>
-                                        @elseif(now()->isBefore($sesi->waktu_mulai))
-                                            <span class="badge bg-secondary">Akan Datang</span>
-                                        @else
-                                            <span class="badge bg-dark">Selesai</span>
-                                        @endif
-                                    @else
-                                        <span class="badge bg-warning">Jadwal Belum Diatur</span>
-                                    @endif
-                                </td>
-
-                                <td>
-                                    @if($sesi->waktu_mulai)
-                                        {{ $sesi->waktu_mulai->format('d M Y, H:i') }}
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($sesi->waktu_selesai)
-                                        {{ $sesi->waktu_selesai->format('d M Y, H:i') }}
-                                    @else
-                                        <span class="text-muted">-</span>
-                                    @endif
-                                </td>
-                                
-                                <td>{{ $sesi->absensi_count }}</td>
-                                
-                                <td>
-                                    <a href="{{ route('operator.absensi.show', $sesi->id) }}" class="btn btn-info btn-sm">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    
-                                    {{-- ✅ DITAMBAHKAN: Tombol Scan QR hanya muncul jika sesi sedang berlangsung --}}
-                                    @if ($sesi->waktu_mulai && $sesi->waktu_selesai && now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
-                                        <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm" target="_blank" title="Scan QR">
-                                            <i class="bi bi-qr-code-scan"></i>
-                                        </a>
-                                    @endif
-                                    
-                                    <button class="btn btn-warning btn-sm btn-edit-sesi"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editSesiModal"
-                                            data-id="{{ $sesi->id }}"
-                                            data-nama="{{ $sesi->nama }}"
-                                            {{-- ✅ DIPERBAIKI: Mencegah error jika waktu null --}}
-                                            data-waktu_mulai="{{ $sesi->waktu_mulai ? $sesi->waktu_mulai->format('Y-m-d H:i') : '' }}"
-                                            data-waktu_selesai="{{ $sesi->waktu_selesai ? $sesi->waktu_selesai->format('Y-m-d H:i') : '' }}">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-
-                                    <button class="btn btn-danger btn-sm btn-hapus-sesi"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#hapusSesiModal"
-                                            data-id="{{ $sesi->id }}"
-                                            data-nama="{{ $sesi->nama }}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </td>
+                                <th>No</th>
+                                <th>Nama Sesi</th>
+                                {{-- ✅ DITAMBAHKAN: Kolom Status --}}
+                                <th>Status</th>
+                                <th>Waktu Mulai</th>
+                                {{-- ✅ DITAMBAHKAN: Header untuk Waktu Selesai --}}
+                                <th>Waktu Selesai</th>
+                                <th>Jumlah Hadir</th>
+                                <th>Aksi</th>
                             </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @foreach ($sesiAbsensi as $index => $sesi)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $sesi->nama }}</td>
+                                    
+                                    {{-- ✅ DITAMBAHKAN: Logika untuk menampilkan status sesi secara dinamis --}}
+                                    <td>
+                                        @if ($sesi->waktu_mulai && $sesi->waktu_selesai)
+                                            @if(now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
+                                                <span class="badge bg-success pulsing-badge">Sedang Berlangsung</span>
+                                            @elseif(now()->isBefore($sesi->waktu_mulai))
+                                                <span class="badge bg-secondary">Akan Datang</span>
+                                            @else
+                                                <span class="badge bg-dark">Selesai</span>
+                                            @endif
+                                        @else
+                                            <span class="badge bg-warning">Jadwal Belum Diatur</span>
+                                        @endif
+                                    </td>
+
+                                    <td>
+                                        @if($sesi->waktu_mulai)
+                                            {{ $sesi->waktu_mulai->format('d M Y, H:i') }}
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($sesi->waktu_selesai)
+                                            {{ $sesi->waktu_selesai->format('d M Y, H:i') }}
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
+                                    </td>
+                                    
+                                    <td>{{ $sesi->absensi_count }}</td>
+                                    
+                                    <td>
+                                        <a href="{{ route('operator.absensi.show', $sesi->id) }}" class="btn btn-info btn-sm">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        
+                                        {{-- ✅ DITAMBAHKAN: Tombol Scan QR hanya muncul jika sesi sedang berlangsung --}}
+                                        @if ($sesi->waktu_mulai && $sesi->waktu_selesai && now()->between($sesi->waktu_mulai, $sesi->waktu_selesai))
+                                            <a href="{{ route('operator.absensi.scan', $sesi->id) }}" class="btn btn-success btn-sm" target="_blank" title="Scan QR">
+                                                <i class="bi bi-qr-code-scan"></i>
+                                            </a>
+                                        @endif
+                                        
+                                        <button class="btn btn-warning btn-sm btn-edit-sesi"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editSesiModal"
+                                                data-id="{{ $sesi->id }}"
+                                                data-nama="{{ $sesi->nama }}"
+                                                {{-- ✅ DIPERBAIKI: Mencegah error jika waktu null --}}
+                                                data-waktu_mulai="{{ $sesi->waktu_mulai ? $sesi->waktu_mulai->format('Y-m-d H:i') : '' }}"
+                                                data-waktu_selesai="{{ $sesi->waktu_selesai ? $sesi->waktu_selesai->format('Y-m-d H:i') : '' }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+
+                                        <button class="btn btn-danger btn-sm btn-hapus-sesi"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#hapusSesiModal"
+                                                data-id="{{ $sesi->id }}"
+                                                data-nama="{{ $sesi->nama }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -231,87 +233,89 @@
                 </div>
             </div>
             <div class="card-body">
-                <table id="pesertaTable" class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama Peserta</th>
-                            <th>Kelompok</th>
-                            {{-- Tampilkan nama sesi sebagai header kolom status --}}
-                            @foreach ($sesiAbsensi as $sesi)
-                                <th class="text-center">{{ $sesi->nama }}</th>
-                            @endforeach
-                            <th>QR Code</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {{-- Loop peserta yang sudah di-eager load --}}
-                        @foreach ($kegiatan->peserta as $index => $peserta)
+                <div class="table-responsive">
+                    <table id="pesertaTable" class="table table-bordered table-striped">
+                        <thead>
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $peserta->nama }}</td>
-                                <td>{{ $peserta->kelompok }}</td>
-                                
-                                {{-- Cek kehadiran untuk setiap sesi dengan lookup cepat --}}
-                                @foreach($sesiAbsensi as $sesi)
-                                    <td class="text-center">
-                                        @if(isset($kehadiranPeserta[$peserta->id]) && $kehadiranPeserta[$peserta->id]->contains($sesi->id))
-                                            <i class="bi bi-check-circle-fill text-success" title="Hadir"></i>
+                                <th>No</th>
+                                <th>Nama Peserta</th>
+                                <th>Kelompok</th>
+                                {{-- Tampilkan nama sesi sebagai header kolom status --}}
+                                @foreach ($sesiAbsensi as $sesi)
+                                    <th class="text-center">{{ $sesi->nama }}</th>
+                                @endforeach
+                                <th>QR Code</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{-- Loop peserta yang sudah di-eager load --}}
+                            @foreach ($kegiatan->peserta as $index => $peserta)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $peserta->nama }}</td>
+                                    <td>{{ $peserta->kelompok }}</td>
+                                    
+                                    {{-- Cek kehadiran untuk setiap sesi dengan lookup cepat --}}
+                                    @foreach($sesiAbsensi as $sesi)
+                                        <td class="text-center">
+                                            @if(isset($kehadiranPeserta[$peserta->id]) && $kehadiranPeserta[$peserta->id]->contains($sesi->id))
+                                                <i class="bi bi-check-circle-fill text-success" title="Hadir"></i>
+                                            @else
+                                                <i class="bi bi-x-circle-fill text-danger" title="Tidak Hadir"></i>
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                    <td>
+                                        @if($peserta->qrcode)
+                                            <img src="{{ asset('storage/'.$peserta->qrcode) }}" alt="QR Code {{ $peserta->nama }}" width="50">
                                         @else
-                                            <i class="bi bi-x-circle-fill text-danger" title="Tidak Hadir"></i>
+                                            <span class="text-muted">N/A</span>
                                         @endif
                                     </td>
-                                @endforeach
-                                <td>
-                                    @if($peserta->qrcode)
-                                        <img src="{{ asset('storage/'.$peserta->qrcode) }}" alt="QR Code {{ $peserta->nama }}" width="50">
-                                    @else
-                                        <span class="text-muted">N/A</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    {{-- Tombol Absen Manual --}}
-                                    <button class="btn btn-success btn-sm btn-absen-manual" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#absenManualModal"
-                                            data-id-peserta="{{ $peserta->id }}"
-                                            data-nama-peserta="{{ $peserta->nama }}">
-                                        <i class="bi bi-check-circle"></i>
-                                    </button>
-                                    
-                                    {{-- ✅ TOMBOL EDIT PESERTA (BARU) --}}
-                                    <button class="btn btn-warning btn-sm btn-edit-peserta"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#editPesertaModal"
-                                            data-id="{{ $peserta->id }}"
-                                            data-nama="{{ $peserta->nama }}"
-                                            data-email="{{ $peserta->email }}"
-                                            data-no_hp="{{ $peserta->no_hp }}"
-                                            data-prodi="{{ $peserta->prodi }}"
-                                            data-nim="{{ $peserta->nim }}"
-                                            data-kelompok="{{ $peserta->kelompok }}">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
+                                    <td>
+                                        {{-- Tombol Absen Manual --}}
+                                        <button class="btn btn-success btn-sm btn-absen-manual" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#absenManualModal"
+                                                data-id-peserta="{{ $peserta->id }}"
+                                                data-nama-peserta="{{ $peserta->nama }}">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                        
+                                        {{-- ✅ TOMBOL EDIT PESERTA (BARU) --}}
+                                        <button class="btn btn-warning btn-sm btn-edit-peserta"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editPesertaModal"
+                                                data-id="{{ $peserta->id }}"
+                                                data-nama="{{ $peserta->nama }}"
+                                                data-email="{{ $peserta->email }}"
+                                                data-no_hp="{{ $peserta->no_hp }}"
+                                                data-prodi="{{ $peserta->prodi }}"
+                                                data-nim="{{ $peserta->nim }}"
+                                                data-kelompok="{{ $peserta->kelompok }}">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
 
-                                    {{-- Tombol Hapus Peserta --}}
-                                    <button class="btn btn-danger btn-sm btn-hapus-peserta"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#hapusPesertaModal"
-                                            data-id="{{ $peserta->id }}"
-                                            data-nama="{{ $peserta->nama }}">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                    
-                                    {{-- Tombol Download QR Code --}}
-                                    <a href="{{ route('operator.peserta.download_qrcode', $peserta->id) }}" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-download"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                                        {{-- Tombol Hapus Peserta --}}
+                                        <button class="btn btn-danger btn-sm btn-hapus-peserta"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#hapusPesertaModal"
+                                                data-id="{{ $peserta->id }}"
+                                                data-nama="{{ $peserta->nama }}">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                        
+                                        {{-- Tombol Download QR Code --}}
+                                        <a href="{{ route('operator.peserta.download_qrcode', $peserta->id) }}" class="btn btn-primary btn-sm">
+                                            <i class="bi bi-download"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
