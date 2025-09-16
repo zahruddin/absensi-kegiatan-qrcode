@@ -70,23 +70,28 @@ class KegiatanController extends Controller
      * Menampilkan halaman detail untuk sebuah kegiatan.
      * Menggunakan Route Model Binding untuk mengambil data Kegiatan secara otomatis.
      */
-    public function detail(Kegiatan $kegiatan)
+   public function detail(Kegiatan $kegiatan)
     {
-        // dd(Auth::check(), Auth::id());
-        // Memastikan operator hanya bisa melihat kegiatannya sendiri (keamanan tambahan)
-        if ($kegiatan->id_user !== Auth::id()) {
+        // Memastikan operator hanya bisa melihat kegiatannya sendiri
+        if ($kegiatan->id_user != Auth::id()) {
             abort(403, 'Anda tidak memiliki akses ke kegiatan ini.');
         }
 
-        // Muat relasi sesiAbsensi beserta hitungan absensinya
+        // ✅ LANGKAH 1: Muat hitungan peserta. Ini akan membuat properti 'peserta_count'.
+        $kegiatan->loadCount('peserta');
+
+        // Muat relasi sesiAbsensi beserta hitungan absensinya (tidak berubah)
         $kegiatan->load(['sesiAbsensi' => function ($query) {
             $query->withCount('absensi')->orderBy('waktu_mulai', 'asc');
         }]);
         $sesiAbsensi = $kegiatan->sesiAbsensi;
 
-        // --- Logika Statistik (sudah benar) ---
-        $totalPeserta = $kegiatan->peserta()->count();
+        // --- Logika Statistik ---
+        // ✅ LANGKAH 2: Gunakan properti yang baru dibuat agar lebih efisien
+        $totalPeserta = $kegiatan->peserta_count;
         $sesiIds = $sesiAbsensi->pluck('id');
+        
+        // ... sisa logika statistik Anda tidak perlu diubah ...
         $jumlahHadirUnik = Absensi::whereIn('id_sesi', $sesiIds)->distinct('id_peserta')->count();
         $tingkatPartisipasi = ($totalPeserta > 0) ? round(($jumlahHadirUnik / $totalPeserta) * 100) : 0;
         $maksimalAbsensi = $totalPeserta * $sesiAbsensi->count();
@@ -96,9 +101,9 @@ class KegiatanController extends Controller
         $sesiSelesai = $sesiAbsensi->where('waktu_selesai', '<', now())->count();
         
         $kehadiranPeserta = Absensi::whereIn('id_sesi', $sesiIds)
-                               ->get()
-                               ->groupBy('id_peserta')
-                               ->map(fn($items) => $items->pluck('id_sesi'));
+                            ->get()
+                            ->groupBy('id_peserta')
+                            ->map(fn($items) => $items->pluck('id_sesi'));
 
         return view('operator.kegiatanDetail', [
             'kegiatan' => $kegiatan,
@@ -110,6 +115,7 @@ class KegiatanController extends Controller
             'tingkatKehadiranTotal' => $tingkatKehadiranTotal,
         ]);
     }
+
 
     /**
      * Memperbarui data kegiatan.
