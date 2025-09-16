@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin;
 use App\Http\Controllers\Operator;
 use App\Http\Controllers\Operator\SesiAbsensiController; 
 use App\Http\Controllers\Public\PendaftaranController;
+use App\Http\Controllers\Public;
 
 
 /*
@@ -39,6 +40,14 @@ Route::post('/logout', function () {
     Auth::logout();  // Menjalankan proses logout
     return redirect()->route('login');  // Mengarahkan pengguna ke halaman login setelah logout
 })->name('logout');
+
+
+
+// ====== ROUTE UNTUK SCAN MANDIRI (PUBLIK) ======
+// Halaman untuk menampilkan scanner
+Route::get('/scan-mandiri/{kegiatan}', [Public\ScanController::class, 'show'])->name('scan.mandiri.show');
+// Endpoint untuk memproses hasil scan dari halaman publik
+Route::post('/scan-mandiri/process', [Public\ScanController::class, 'process'])->name('scan.mandiri.process');
 
 
 Route::get('/scan/{idmeja}', [Customer\MenuController::class, 'scanQRCode'])->name('customer.scan.qrcode');

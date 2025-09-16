@@ -102,6 +102,11 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Sesi Absensi</h5>
                 <div>
+                    {{-- ✅ TOMBOL BARU ANDA DITAMBAHKAN DI SINI --}}
+                    <button type="button" class="btn btn-info btn-sm" id="btnSalinLinkScanMandiri" 
+                            data-link="{{ route('scan.mandiri.show', $kegiatan->id) }}">
+                        <i class="bi bi-clipboard-check"></i> Salin Link Scan Mandiri
+                    </button>
                     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exportAbsensiModal">
                         <i class="bi bi-file-earmark-excel"></i> Export Absensi
                     </button>
@@ -220,9 +225,9 @@
                     <a href="{{ route('operator.peserta.export.linkqr', $kegiatan->id) }}" class="btn btn-success btn-sm">
                         <i class="bi bi-file-earmark-excel"></i> Export link qrcode
                     </a>
-                    {{-- <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapusSemuaPesertaModal">
+                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#hapusSemuaPesertaModal">
                         <i class="bi bi-trash3-fill"></i> Hapus Semua Peserta
-                    </button> --}}
+                    </button>
                 </div>
             </div>
             <div class="card-body">
@@ -805,6 +810,31 @@
             form.querySelector('#edit_tanggal_selesai').value = waktuSelesai.substring(0, 10);
             form.querySelector('#edit_jam_selesai').value = waktuSelesai.substring(11, 16);
         }
+        // salin link scan qr code
+        const btnSalin = document.getElementById('btnSalinLinkScanMandiri');
+        if(btnSalin) {
+            btnSalin.addEventListener('click', function() {
+                const link = this.getAttribute('data-link');
+                // Gunakan navigator.clipboard untuk menyalin teks
+                navigator.clipboard.writeText(link).then(() => {
+                    // Beri feedback visual kepada pengguna
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="bi bi-check-all"></i> Link Tersalin!';
+                    this.classList.remove('btn-info');
+                    this.classList.add('btn-success');
+                    
+                    // Kembalikan tombol ke keadaan semula setelah 2 detik
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('btn-success');
+                        this.classList.add('btn-info');
+                    }, 2000);
+                }).catch(err => {
+                    // Tampilkan pesan error jika gagal
+                    alert('Gagal menyalin link. Pastikan Anda mengakses halaman ini melalui HTTPS.');
+                });
+            });
+        }
 
         // ===========================================
         // LOGIKA UNTUK MODAL EDIT SESI
@@ -1004,4 +1034,7 @@
         }
     });
 </script>
+
+
+
 @endsection
