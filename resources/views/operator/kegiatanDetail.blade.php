@@ -101,15 +101,16 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Sesi Absensi</h5>
-                <div>
-                    {{-- ✅ TOMBOL BARU ANDA DITAMBAHKAN DI SINI --}}
+                <div class="d-flex flex-column flex-md-row gap-2">
                     <button type="button" class="btn btn-info btn-sm" id="btnSalinLinkScanMandiri" 
                             data-link="{{ route('scan.mandiri.show', $kegiatan->id) }}">
                         <i class="bi bi-clipboard-check"></i> Salin Link Scan Mandiri
                     </button>
+                    
                     <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exportAbsensiModal">
                         <i class="bi bi-file-earmark-excel"></i> Export Absensi
                     </button>
+                    
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#tambahSesiModal">
                         <i class="bi bi-plus-circle"></i> Tambah Sesi
                     </button>
@@ -214,7 +215,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Data Peserta</h5>
-                <div>
+                <div class="d-flex flex-column flex-md-row gap-2">
                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#tambahPesertaModal">
                         <i class="bi bi-plus-circle"></i> Tambah Peserta
                     </button>
