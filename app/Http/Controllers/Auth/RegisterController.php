@@ -33,8 +33,7 @@ class RegisterController extends Controller
             // Validasi untuk Honeypot
             'fax_number' => ['prohibited'], 
             
-            // Validasi untuk reCAPTCHA
-            'g-recaptcha-response' => ['required', 'recaptcha'],
+            // Validasi untuk reCAPTCHA sudah dihapus
         ]);
 
         User::create([
@@ -48,4 +47,3 @@ class RegisterController extends Controller
         return redirect('/login')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
 }
-
