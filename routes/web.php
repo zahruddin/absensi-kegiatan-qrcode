@@ -80,6 +80,9 @@ Route::middleware(['auth', 'role:admin'])
     // --- Kelola Peserta ---
     // URL: /admin/peserta -> Nama Route: admin.peserta.index
     Route::get('/peserta', [Admin\PesertaController::class, 'index'])->name('peserta.index');
+    Route::post('/store', [Admin\PesertaController::class, 'store'])->name('peserta.store');
+    Route::put('/update/{user}', [Admin\PesertaController::class, 'update'])->name('peserta.update');
+    Route::delete('/destroy/{user}', [Admin\PesertaController::class, 'destroy'])->name('peserta.destroy');
     // ... Tambahkan route store, update, destroy untuk peserta di sini jika Anda perlukan ...
 
 
