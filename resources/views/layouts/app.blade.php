@@ -288,25 +288,15 @@
                         @endif
                         {{-- Menu untuk peserta --}}
                         @if(Auth::user()->role == 'peserta')
-                            <li class="nav-item {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
-                                <a href="{{ route('customer.menu') }}" class="nav-link {{ request()->routeIs('customer.menu') ? 'active' : '' }}">
+                            <li class="nav-item {{ request()->routeIs('peserta.dashboard') ? 'active' : '' }}">
+                                <a href="{{ route('peserta.dashboard') }}" class="nav-link {{ request()->routeIs('peserta.dashboard') ? 'active' : '' }}">
                                 <i class="nav-icon bi bi-card-list"></i>
                                 <p>
                                     Menu
                                 </p>
                                 </a>
                             </li>
-                            <li class="nav-item {{ request()->routeIs('customer.riwayat') ? 'active' : '' }}">
-                                <a href="{{ route('customer.riwayat') }}" class="nav-link {{ request()->routeIs('customer.riwayat') ? 'active' : '' }}">
-                                <i class="nav-icon bi bi-card-list"></i>
-                                <p>
-                                    Riwayat Transaksi
-                                </p>
-                                </a>
-                            </li>
-                            
                         @endif
-
                         <li class="nav-item">
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf

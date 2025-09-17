@@ -55,7 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(Kegiatan::class, 'id_user');
     }
     public function kepesertaan(): HasMany
-{
-    return $this->hasMany(Peserta::class, 'id_user');
-}
+    {
+        return $this->hasMany(Peserta::class, 'id_user');
+    }
+    public function peserta(): HasMany
+    {
+        return $this->hasMany(Peserta::class, 'id_user');
+    }
 }

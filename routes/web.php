@@ -7,6 +7,7 @@ use App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin;
 use App\Http\Controllers\Operator;
+use App\Http\Controllers\Peserta;
 use App\Http\Controllers\Operator\SesiAbsensiController; 
 use App\Http\Controllers\Public\PendaftaranController;
 use App\Http\Controllers\Public;
@@ -88,7 +89,7 @@ Route::middleware(['auth', 'role:admin'])
     // ... Tambahkan route store, update, destroy untuk kegiatan di sini jika Anda perlukan ...
 });
 
-
+// operator
 Route::middleware(['auth', 'role:operator'])->group(function () {
 
     // DASHBOARD
@@ -152,6 +153,11 @@ Route::middleware(['auth', 'role:operator'])->group(function () {
 
 
 
-Route::middleware(['auth', 'role:peserta'])->group(function () {
+    // ====== ROUTE UNTUK DASHBOARD PESERTA ======
+Route::middleware(['auth', 'role:peserta'])->prefix('peserta')->name('peserta.')->group(function () {
     
+    // Halaman utama dashboard
+    Route::get('/dashboard', [Peserta\DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/kegiatan/{kegiatan}/register', [Peserta\DashboardController::class, 'register'])->name('kegiatan.register');
+
 });
