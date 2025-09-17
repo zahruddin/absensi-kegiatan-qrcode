@@ -15,7 +15,8 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped">
+                {{-- ✅ DITAMBAHKAN: ID unik "pesertaTable" untuk DataTables --}}
+                <table id="pesertaTable" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -28,7 +29,8 @@
                     <tbody>
                         @forelse ($pesertas as $peserta)
                             <tr>
-                                <td>{{ $loop->iteration + $pesertas->firstItem() - 1 }}</td>
+                                {{-- ✅ DIUBAH: Penomoran sekarang menggunakan $loop->iteration --}}
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $peserta->name }}</td>
                                 <td>{{ $peserta->username }}</td>
                                 <td>{{ $peserta->email }}</td>
@@ -59,9 +61,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="mt-3 d-flex justify-content-end">
-                {{ $pesertas->links() }}
-            </div>
+            {{-- ✅ DIHAPUS: Blok pagination Laravel tidak lagi diperlukan --}}
         </div>
     </div>
 </div>
@@ -176,9 +176,21 @@
 @endsection
 
 @push('scripts')
+{{-- ✅ DITAMBAHKAN: Script untuk mengaktifkan DataTables --}}
+<script>
+    $(document).ready(function() {
+        $('#pesertaTable').DataTable({
+            "responsive": true,
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.21/i18n/Indonesian.json"
+            }
+        });
+    });
+</script>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    // Logika untuk Modal Edit
+    // Logika untuk Modal Edit (tidak berubah)
     const editPesertaModal = document.getElementById('editPesertaModal');
     if (editPesertaModal) {
         editPesertaModal.addEventListener('show.bs.modal', function (event) {
@@ -195,7 +207,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Logika untuk Modal Hapus
+    // Logika untuk Modal Hapus (tidak berubah)
     const hapusPesertaModal = document.getElementById('hapusPesertaModal');
     if (hapusPesertaModal) {
         hapusPesertaModal.addEventListener('show.bs.modal', function (event) {

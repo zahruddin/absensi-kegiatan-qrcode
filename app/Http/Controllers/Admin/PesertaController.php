@@ -18,7 +18,9 @@ class PesertaController extends Controller
      */
     public function index()
     {
-        $pesertas = User::where('role', 'peserta')->latest()->paginate(10);
+        // ✅ DIUBAH: Menggunakan get() untuk mengambil semua data, bukan paginate()
+        $pesertas = User::where('role', 'peserta')->latest()->get();
+        
         return view('admin.peserta.index', compact('pesertas'));
     }
 
