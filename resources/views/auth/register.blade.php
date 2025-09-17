@@ -38,7 +38,7 @@
     <div class="register-box">
         <div class="card card-outline card-primary">
         <div class="card-header text-center">
-            <a href="#" class="h1"><b>WELIJO CAFE</b></a>
+            <a href="#" class="h1"><b>REGISTRASI ABSENSI</b></a>
         </div>
         <div class="card-body">
             <p class="login-box-msg">Register akun baru</p>
