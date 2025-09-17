@@ -31,7 +31,7 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login'); // Halaman login
 Route::post('/login', [LoginController::class, 'login']); // Proses login
 Route::get('/register/ka', [RegisterController::class, 'showForm'])->name('register');
-Route::post('/register/ka', [RegisterController::class, 'register']);
+Route::post('/register/oke', [RegisterController::class, 'register']);
 Route::get('/register/{kegiatan}', [PendaftaranController::class, 'show'])->name('kegiatan.register.show');
 Route::post('/register/{kegiatan}', [PendaftaranController::class, 'store'])->name('kegiatan.register.store')->middleware('auth');
 
