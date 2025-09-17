@@ -1,5 +1,4 @@
 <?php
-// app/Http/Controllers/Auth/RegisterController.php
 
 namespace App\Http\Controllers\Auth;
 
@@ -7,44 +6,46 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
 
 class RegisterController extends Controller
 {
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name'       => ['required', 'string', 'max:255'],
-            'username'   => ['required', 'string', 'max:255', 'unique:users'],
-            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password'   => ['required', 'confirmed', Rules\Password::defaults()],
-            'fax_number' => ['prohibited'], // <-- Letakkan di sini
-        ]);
-    }
+    /**
+     * Menampilkan form registrasi.
+     */
     public function showForm()
     {
         return view('auth.register');
     }
 
+    /**
+     * Menangani permintaan registrasi dan memvalidasinya.
+     */
     public function register(Request $request)
     {
+        // ✅ SEMUA VALIDASI DITERAPKAN DI SINI
         $request->validate([
-            'name' => 'required|string|max:255',
-            'username' => 'required|string|max:100|unique:users,username',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6|confirmed',
+            'name'       => ['required', 'string', 'max:255'],
+            'username'   => ['required', 'string', 'max:255', 'unique:users'],
+            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'   => ['required', 'confirmed', Rules\Password::defaults()],
+            
+            // Validasi untuk Honeypot
+            'fax_number' => ['prohibited'], 
+            
+            // Validasi untuk reCAPTCHA
+            'g-recaptcha-response' => ['required', 'recaptcha'],
         ]);
 
         User::create([
-            'name' => $request->name,
+            'name'     => $request->name,
             'username' => $request->username,
-            'email' => $request->email,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'peserta', // default role, bisa 'admin' jika khusus
+            'role'     => 'peserta', // Role otomatis di-set menjadi 'peserta'
         ]);
 
         return redirect('/login')->with('success', 'Akun berhasil dibuat! Silakan login.');
     }
-
 }
+

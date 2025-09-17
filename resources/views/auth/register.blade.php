@@ -14,6 +14,8 @@
             cursor: pointer;
         }
     </style>
+    {{-- ✅ DITAMBAHKAN: Script reCAPTCHA dari Google --}}
+    {!! NoCaptcha::renderJs() !!}
 </head>
 <body class="register-page bg-body-secondary">
     <div class="register-box">
@@ -84,7 +86,7 @@
                         </div>
                     </div>
 
-                    {{-- ✅ DITAMBAHKAN: Field Jebakan Honeypot --}}
+                    {{-- Field Jebakan Honeypot --}}
                     <div class="d-none" aria-hidden="true">
                         <label for="fax_number">Jangan isi field ini</label>
                         <input type="text" name="fax_number" id="fax_number" tabindex="-1" autocomplete="off">
@@ -114,17 +116,32 @@
                     toggleIcon.addEventListener('click', function() {
                         const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
                         passwordField.setAttribute('type', type);
-                        // Ganti ikon mata
                         this.classList.toggle('bi-eye');
                         this.classList.toggle('bi-eye-slash');
                     });
                 }
             }
-
-            // Terapkan fungsi ke kedua field password
             setupPasswordToggle('password', 'togglePassword');
             setupPasswordToggle('password_confirmation', 'togglePasswordConfirmation');
         });
     </script>
+    
+    {{-- ✅ DITAMBAHKAN: Skrip untuk menjalankan reCAPTCHA v3 --}}
+    <script>
+    grecaptcha.ready(function() {
+        grecaptcha.execute('{{ config('no-captcha.sitekey') }}', {action: 'register'}).then(function(token) {
+            // Tambahkan input tersembunyi dengan token ke form
+            let form = document.querySelector('form');
+            if (form) {
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'g-recaptcha-response';
+                input.value = token;
+                form.appendChild(input);
+            }
+        });
+    });
+    </script>
 </body>
 </html>
+
