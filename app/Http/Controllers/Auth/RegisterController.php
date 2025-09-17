@@ -10,6 +10,16 @@ use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
+    protected function validator(array $data)
+    {
+        return Validator::make($data, [
+            'name'       => ['required', 'string', 'max:255'],
+            'username'   => ['required', 'string', 'max:255', 'unique:users'],
+            'email'      => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password'   => ['required', 'confirmed', Rules\Password::defaults()],
+            'fax_number' => ['prohibited'], // <-- Letakkan di sini
+        ]);
+    }
     public function showForm()
     {
         return view('auth.register');

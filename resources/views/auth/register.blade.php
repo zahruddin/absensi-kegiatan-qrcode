@@ -84,6 +84,12 @@
                         </div>
                     </div>
 
+                    {{-- ✅ DITAMBAHKAN: Field Jebakan Honeypot --}}
+                    <div class="d-none" aria-hidden="true">
+                        <label for="fax_number">Jangan isi field ini</label>
+                        <input type="text" name="fax_number" id="fax_number" tabindex="-1" autocomplete="off">
+                    </div>
+
                     <div class="row">
                         <div class="col-8 d-flex align-items-center">
                             <a href="{{ route('login') }}">Saya sudah punya akun</a>
