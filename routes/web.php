@@ -47,9 +47,9 @@ Route::post('/logout', function () {
 
 // ====== ROUTE UNTUK SCAN MANDIRI (PUBLIK) ======
 // Halaman untuk menampilkan scanner
-Route::get('/scan-mandiri/{kegiatan}', [Public\ScanController::class, 'show'])->name('scan.mandiri.show');
+Route::get('/upppp/{kegiatan}', [Public\ScanController::class, 'show'])->name('scan.mandiri.show');
 // Endpoint untuk memproses hasil scan dari halaman publik
-Route::post('/scan-mandiri/process', [Public\ScanController::class, 'process'])->name('scan.mandiri.process');
+Route::post('/upppp/process', [Public\ScanController::class, 'process'])->name('scan.mandiri.process');
 
 
 Route::get('/scan/{idmeja}', [Customer\MenuController::class, 'scanQRCode'])->name('customer.scan.qrcode');
