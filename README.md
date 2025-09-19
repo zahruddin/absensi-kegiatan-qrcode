@@ -1,6 +1,4 @@
 <div align="center">
-{{-- Anda bisa meletakkan logo di sini --}}
-{{-- <img src="URL_LOGO_ANDA" alt="Logo Aplikasi" width="150"> --}}
 
 <h1 align="center">Sistem Absensi Berbasis QR Code</h1>
 
