@@ -95,7 +95,7 @@ Untuk menjalankan proyek ini di lingkungan lokal, ikuti langkah-langkah berikut:
 
     Clone Repository
 
-    git clone [https://github.com/zahruddin/absensi-kegiatan-qrcode.git](https://github.com/zahruddin/absensi-kegiatan-qrcode.git)
+    git clone https://github.com/zahruddin/absensi-kegiatan-qrcode.git
     cd absensi-kegiatan-qrcode
 
     Instal Dependensi
