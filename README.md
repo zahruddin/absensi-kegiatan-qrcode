@@ -1,66 +1,153 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+{{-- Anda bisa meletakkan logo di sini --}}
+{{-- <img src="URL_LOGO_ANDA" alt="Logo Aplikasi" width="150"> --}}
+
+<h1 align="center">Sistem Absensi Berbasis QR Code</h1>
 
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+Sebuah solusi modern untuk manajemen kehadiran acara yang efisien, dibangun dengan Laravel.
 </p>
 
-## About Laravel
+<!-- Badges -->
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+<p align="center">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Laravel-10-FF2D20%3Fstyle%3Dfor-the-badge%26logo%3Dlaravel" alt="Laravel 10">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/PHP-8.3-777BB4%3Fstyle%3Dfor-the-badge%26logo%3Dphp" alt="PHP 8.3">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/Bootstrap-5-7952B3%3Fstyle%3Dfor-the-badge%26logo%3Dbootstrap" alt="Bootstrap 5">
+<img src="https://www.google.com/search?q=https://img.shields.io/badge/License-MIT-yellow.svg%3Fstyle%3Dfor-the-badge" alt="License: MIT">
+</p>
+</div>
+🎯 Latar Belakang
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Manajemen kehadiran di acara seringkali diwarnai oleh antrian panjang dan rekapitulasi data manual yang memakan waktu. Aplikasi ini hadir sebagai solusi untuk mengotomatiskan seluruh proses, mulai dari pendaftaran peserta hingga pelaporan kehadiran, menggunakan teknologi QR Code yang cepat dan andal.
+	
+🚀 Fitur Utama
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Aplikasi ini dirancang dengan tiga peran pengguna yang memiliki hak akses berbeda untuk memastikan alur kerja yang aman dan terorganisir.
 
-## Learning Laravel
+<details>
+<summary><strong>👤 Admin - Pusat Kontrol Platform</strong></summary>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    Manajemen Operator: CRUD (Create, Read, Update, Delete) untuk akun operator.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+    Manajemen Akun Peserta: Mengelola semua akun pengguna dengan peran 'peserta'.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    Manajemen Kegiatan: Memantau dan mengelola semua kegiatan yang ada di platform.
 
-## Laravel Sponsors
+</details>
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+<details>
+<summary><strong>💼 Operator - Pengelola Acara</strong></summary>
 
-### Premium Partners
+    Manajemen Kegiatan & Sesi: Membuat kegiatan baru dan sesi absensi di dalamnya, lengkap dengan proteksi tabrakan jadwal.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+    Manajemen Peserta:
 
-## Contributing
+        Menambah peserta secara manual.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+        Mengimpor & Mengekspor data peserta via Excel (dengan fitur re-impor untuk update).
 
-## Code of Conduct
+        Menghapus semua peserta dalam satu kegiatan.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    Pelacakan & Pelaporan:
 
-## Security Vulnerabilities
+        Dashboard detail per kegiatan dengan statistik kehadiran yang relevan.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+        Mengekspor laporan absensi (log per sesi atau rekapitulasi kehadiran).
 
-## License
+    Fungsionalitas QR Code:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+        Scan absensi peserta menggunakan kamera.
+
+        Menyediakan link "Scan Mandiri" yang bisa dibagikan.
+
+</details>
+
+<details>
+<summary><strong>👨‍🎓 Peserta - Pengguna Akhir</strong></summary>
+
+    Registrasi Aman: Halaman pendaftaran publik dilindungi oleh Honeypot dan Google reCAPTCHA v3.
+
+    Dashboard Peserta: Melihat daftar kegiatan yang tersedia dan status pendaftaran.
+
+    Pendaftaran Mudah: Mendaftar ke kegiatan melalui modal konfirmasi untuk melengkapi data profil.
+
+    Manajemen QR Code: Melihat dan mengunduh QR Code unik untuk setiap kegiatan yang diikuti.
+
+</details>
+🔧 Teknologi & Paket Utama
+
+    Backend: Laravel 10, PHP 8.3
+
+    Frontend: Bootstrap 5, AdminLTE, JavaScript, jQuery
+
+    Database: MySQL
+
+    Paket Kunci:
+
+        maatwebsite/excel: Untuk semua fungsionalitas import dan export data Excel.
+
+        simplesoftwareio/simple-qrcode: Untuk men-generate semua QR Code.
+
+        anhskohbo/no-captcha: Untuk integrasi Google reCAPTCHA v3.
+
+⚙️ Panduan Instalasi Lokal
+
+Untuk menjalankan proyek ini di lingkungan lokal, ikuti langkah-langkah berikut:
+
+    Clone Repository
+
+    git clone [https://github.com/zahruddin/absensi-kegiatan-qrcode.git](https://github.com/zahruddin/absensi-kegiatan-qrcode.git)
+    cd absensi-kegiatan-qrcode
+
+    Instal Dependensi
+
+    composer install
+    npm install
+    npm run build
+
+    Siapkan File Environment (.env)
+    Salin file .env.example, lalu sesuaikan konfigurasi database Anda.
+
+    cp .env.example .env
+    php artisan key:generate
+
+    Jalankan Migrasi Database
+
+    php artisan migrate
+
+    Buat Symbolic Link
+    Perintah ini penting agar file yang diunggah (seperti QR Code) bisa diakses dari web.
+
+    php artisan storage:link
+
+    Jalankan Server Development
+
+    php artisan serve
+
+    Aplikasi Anda sekarang bisa diakses di http://127.0.0.1:8000.
+
+🚀 Alur Deployment ke Server (cPanel)
+
+    Push ke GitHub: Pastikan semua perubahan sudah di-push ke repository Anda.
+
+    Login ke Server: Gunakan SSH untuk masuk ke server hosting Anda.
+
+    Tarik Perubahan: Masuk ke direktori proyek dan jalankan git pull origin main.
+
+    Instal Dependensi:
+
+    # Gunakan path PHP yang benar jika perlu
+    /opt/cpanel/ea-php83/root/usr/bin/php /usr/local/bin/composer install --optimize-autoloader --no-dev
+
+    Jalankan Migrasi:
+
+    php artisan migrate --force
+
+    Optimalkan Aplikasi: Bersihkan cache lama dan buat cache baru yang teroptimasi.
+
+    php artisan optimize
+
+📄 Lisensi
+
+Proyek ini berada di bawah Lisensi MIT. Lihat file LICENSE untuk detail lebih lanjut.
